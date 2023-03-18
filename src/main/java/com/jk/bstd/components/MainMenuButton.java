@@ -1,12 +1,10 @@
 package com.jk.bstd.components;
 
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 
 public class MainMenuButton extends Button {
     private static final String STYLE = "-fx-background-color: transparent;";
@@ -27,50 +25,40 @@ public class MainMenuButton extends Button {
 
     private void setImagePath() {
         btnImg = new Image(getClass().getResource("/images/mainMenu/" + imgName + ".png").toExternalForm());
-        btnImgHover = new Image(getClass().getResource("/images/mainMenu/" + imgName + "Hover.png").toExternalForm());
+        btnImgHover = new Image(getClass().getResource("/images/mainMenu/" + imgName + "Pressed.png").toExternalForm());
     }
 
     public void setButtonPressedStyle() {
         setGraphic(new ImageView(btnImgHover));
         setStyle(STYLE);
+        setLayoutY(getLayoutY() + 8);
     }
 
     public void setIdleButtonStyle() {
         setGraphic(new ImageView(btnImg));
         setStyle(STYLE);
+        setLayoutY(getLayoutY() - 8);
     }
 
     private void initializeButtonListeners() {
-        setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (event.getButton().equals(MouseButton.PRIMARY)) {
-                    setButtonPressedStyle();
-                }
+        setOnMousePressed(event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                setButtonPressedStyle();
             }
         });
 
-        setOnMouseReleased(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (event.getButton().equals(MouseButton.PRIMARY)) {
-                    setIdleButtonStyle();
-                }
+        setOnMouseReleased(event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                setIdleButtonStyle();
             }
         });
 
-        setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                setEffect(new DropShadow());
-            }
+        setOnMouseEntered(event -> {
+            setEffect(new DropShadow());
         });
 
-        setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                setEffect(null);
-            }
+        setOnMouseExited(event -> {
+            setEffect(null);
         });
     }
 }
