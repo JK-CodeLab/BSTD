@@ -37,6 +37,14 @@ public class View {
         return mainStage;
     }
 
+    public AnchorPane getMainPane() {
+        return mainPane;
+    }
+
+    public Scene getMainScene() {
+        return mainScene;
+    }
+
     public void createBackground(String imgPath) {
         Image bgImg = new Image(Objects.requireNonNull(getClass().getResource("/images/" + imgPath)).toExternalForm());
         BackgroundImage bgImgObj = new BackgroundImage(bgImg, null, null, null, null);

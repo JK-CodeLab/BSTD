@@ -28,13 +28,13 @@ public class MainMenuButton extends Button {
         btnImgHover = new Image(getClass().getResource("/images/mainMenu/" + imgName + "Pressed.png").toExternalForm());
     }
 
-    public void setButtonPressedStyle() {
+    private void setButtonPressedStyle() {
         setGraphic(new ImageView(btnImgHover));
         setStyle(STYLE);
         setLayoutY(getLayoutY() + 8);
     }
 
-    public void setIdleButtonStyle() {
+    private void setIdleButtonStyle() {
         setGraphic(new ImageView(btnImg));
         setStyle(STYLE);
         setLayoutY(getLayoutY() - 8);
