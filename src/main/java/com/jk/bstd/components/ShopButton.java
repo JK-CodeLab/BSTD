@@ -16,22 +16,22 @@ public class ShopButton extends Button {
     private static final String STYLE = "-fx-background-color: transparent;";
     private final String imgName;
     private final String itemName;
-    private Image btnImgPath;
-    private Image itemImgPath;
+    private Image shopBtnImg;
+    private Image itemImg;
 
     public ShopButton(String imgName) {
         this.imgName = imgName;
         this.itemName = imgName.substring(4);
         setImagePath();
-        setGraphic(new ImageView(btnImgPath));
+        setGraphic(new ImageView(shopBtnImg));
         setStyle(STYLE);
         setPadding(new Insets(0));
         initializeButtonListeners(this);
     }
 
     private void setImagePath() {
-        btnImgPath = new Image(getClass().getResource("/images/gameScreen/" + imgName + ".png").toExternalForm());
-        itemImgPath = new Image(getClass().getResource("/images/gameScreen/" + "Path" + ".png").toExternalForm());
+        shopBtnImg = new Image(getClass().getResource("/images/gameScreen/" + imgName + ".png").toExternalForm());
+        itemImg = new Image(getClass().getResource("/images/gameScreen/" + "Path" + ".png").toExternalForm());
     }
 
     private void initializeButtonListeners(Node node) {
@@ -42,7 +42,7 @@ public class ShopButton extends Button {
             db.setContent(content);
 
 
-            ImageView iv = new ImageView(itemImgPath);
+            ImageView iv = new ImageView(itemImg);
             iv.setFitWidth(64);
             iv.setFitHeight(64);
             db.setDragView(iv.snapshot(null, null));
@@ -64,6 +64,6 @@ public class ShopButton extends Button {
     }
 
     public Image getImage() {
-        return itemImgPath;
+        return itemImg;
     }
 }

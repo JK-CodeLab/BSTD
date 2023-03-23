@@ -1,8 +1,14 @@
 package com.jk.bstd.ui;
 
+import com.jk.bstd.entities.Point;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+
+import java.util.List;
+import java.util.Objects;
 
 public class GameGrid {
     private final GridPane gameGrid;
@@ -32,6 +38,16 @@ public class GameGrid {
             ColumnConstraints column = new ColumnConstraints(64);
             gameGrid.getColumnConstraints().add(column);
         }
+
+        setFirstPath();
+    }
+
+    private void setFirstPath() {
+        Image pathImg = new Image(Objects.requireNonNull(getClass().getResource("/images/gameScreen/Path.png")).toExternalForm());
+        ImageView pathView = new ImageView(pathImg);
+        pathView.setFitHeight(64);
+        pathView.setFitWidth(64);
+        gameGrid.add(pathView, 2, 0);
     }
 
     public GridPane getGameGrid() {

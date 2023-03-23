@@ -1,8 +1,8 @@
 package com.jk.bstd.ui;
 
 import com.jk.bstd.components.ShopButton;
+import com.jk.bstd.entities.Point;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
@@ -112,20 +112,16 @@ public class GameView extends View {
                 int col = x/64;
 
                 // check if the grid is empty
-                boolean isEmpty = true;
-                for (Node node : gameGrid.getChildren()) {
-                    Integer rowIndex = GridPane.getRowIndex(node);
-                    Integer colIndex = GridPane.getColumnIndex(node);
-                    if (rowIndex != null && colIndex != null) {
-                        if (rowIndex == row && colIndex == col) {
-                            isEmpty = false;
-                        }
-                    }
-                }
+                boolean isEmpty = isGridEmpty(row, col);
 
-                // if the grid is empty, add the item to the grid
-                if (isEmpty) {
+                if (isEmpty && !item.equals("Path")) {
                     gameGrid.add(newItem, col, row);
+                } else if (isEmpty) {
+                    Point lastItem = getLastItem();
+                    boolean isAdjacent = isAdjacent(lastItem, row, col);
+                    if (isAdjacent) {
+                        gameGrid.add(newItem, col, row);
+                    }
                 }
             }
             event.setDropCompleted(true);
@@ -135,6 +131,41 @@ public class GameView extends View {
             printGrid();
         });
     }
+
+    private boolean isGridEmpty(int row, int col) {
+        for (Node node : gameGrid.getChildren()) {
+            Integer rowIndex = GridPane.getRowIndex(node);
+            Integer colIndex = GridPane.getColumnIndex(node);
+            if (rowIndex != null && colIndex != null) {
+                if (rowIndex == row && colIndex == col) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private Point getLastItem() {
+        int size = gameGrid.getChildren().size();
+        Node lastItem = gameGrid.getChildren().get(size - 1);
+        Integer rowIndex = GridPane.getRowIndex(lastItem);
+        Integer colIndex = GridPane.getColumnIndex(lastItem);
+        return new Point(rowIndex, colIndex);
+    }
+
+    private boolean isAdjacent(Point lastItem, int row, int col) {
+        if (lastItem.getX() == row && lastItem.getY() == col - 1) {
+            return true;
+        } else if (lastItem.getX() == row && lastItem.getY() == col + 1) {
+            return true;
+        } else if (lastItem.getX() == row - 1 && lastItem.getY() == col) {
+            return true;
+        } else if (lastItem.getX() == row + 1 && lastItem.getY() == col) {
+            return true;
+        }
+        return false;
+    }
+
 
     // TODO: Remove this (debugging)
     private void printGrid() {
