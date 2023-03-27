@@ -73,11 +73,11 @@ public class GameView extends View {
     }
 
     public void createShopButtons() {
-        ShopButton shopPath = new ShopButton("shopPath");
-        ShopButton shopSprinkler = new ShopButton("shopSprinkler");
-        ShopButton shopScarecrow = new ShopButton("shopScarecrow");
-        ShopButton shopDog = new ShopButton("shopDog");
-        ShopButton shopFarmer = new ShopButton("shopFarmer");
+        ShopButton shopPath = new ShopButton("shopPath", false);
+        ShopButton shopSprinkler = new ShopButton("shopSprinkler", false);
+        ShopButton shopScarecrow = new ShopButton("shopScarecrow", false);
+        ShopButton shopDog = new ShopButton("shopDog", false);
+        ShopButton shopFarmer = new ShopButton("shopFarmer", false);
 
         addShopButtons(shopPath);
         addShopButtons(shopSprinkler);
@@ -97,7 +97,7 @@ public class GameView extends View {
         gameGrid.setOnDragDropped(event -> {
             if (event.getGestureSource() instanceof ShopButton) {
                 String item = event.getDragboard().getString();
-                ShopButton newItem = new ShopButton(item);
+                ShopButton newItem = new ShopButton(item, true);
 
                 // current mouse position
                 double mouseX = event.getSceneX();
@@ -114,14 +114,21 @@ public class GameView extends View {
                 // check if the grid is empty
                 boolean isEmpty = isGridEmpty(row, col);
 
-                if (isEmpty && !item.equals("Path")) {
-                    gameGrid.add(newItem, col, row);
-                } else if (isEmpty) {
+                if (isEmpty && item.equals("Path")) {
                     Point lastItem = getLastItem();
                     boolean isAdjacent = isAdjacent(lastItem, row, col);
                     if (isAdjacent) {
                         gameGrid.add(newItem, col, row);
                     }
+                } else if (isEmpty) {
+                    if (item.equals("Sprinkler")) {
+                        newItem.setLayoutX(x);
+                        newItem.setLayoutY(y);
+                    } else {
+                        newItem.setLayoutX(x);
+                        newItem.setLayoutY(y - 64);
+                    }
+                    super.getMainPane().getChildren().add(newItem);
                 }
             }
             event.setDropCompleted(true);
@@ -174,5 +181,6 @@ public class GameView extends View {
             Integer colIndex = GridPane.getColumnIndex(node);
             System.out.println("Row: " + rowIndex + " Col: " + colIndex);
         }
+        System.out.println("-----");
     }
 }
