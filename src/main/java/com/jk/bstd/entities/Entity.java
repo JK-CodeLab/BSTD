@@ -1,5 +1,7 @@
 package com.jk.bstd.entities;
 
+import javafx.scene.image.ImageView;
+
 public abstract class Entity {
     // TODO: This needs to change depending on how we are implementing the grid system
     private Point point;
@@ -16,6 +18,9 @@ public abstract class Entity {
     public int getX() {
         return this.point.getX();
     }
+    public int getCost() {
+        return 0;
+    }
     public int getY() {
         return this.point.getY();
     }
@@ -25,4 +30,5 @@ public abstract class Entity {
     public void setY(int y) {
         this.point.setY(y);
     }
+    public abstract ImageView getImgView();
 }
