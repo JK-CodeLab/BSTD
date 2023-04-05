@@ -27,7 +27,6 @@ public class GameView extends View {
     private GridPane gameGrid;
     private List<ShopButton> shopButtons;
     private final List<String> gameMenuButtons = Arrays.asList("menuBtn", "playBtn", "sellBtn");
-    private Image cursorImg;
     private final int SHOP_BTN_START_X = 1008;
     private final int SHOP_BTN_START_Y = 66;
 
@@ -35,7 +34,6 @@ public class GameView extends View {
         super();
         player = new Player(); // TODO: get player from main menu, or create new player
         shopButtons = new ArrayList<>();
-        cursorImg = new Image(Objects.requireNonNull(getClass().getResource("/images/cursor.png")).toExternalForm());
         createBackground("gameScreen/gameBg.png");
         createShop();
 
