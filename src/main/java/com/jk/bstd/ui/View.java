@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import java.util.Objects;
 
 public class View {
-    private static final int HEIGHT = 720;
+    private static final int HEIGHT = 832;
     private static final int WIDTH = 1280;
     private final AnchorPane mainPane;
     private final Scene mainScene;
