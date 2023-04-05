@@ -5,4 +5,5 @@ module com.jk.bstd {
 
     opens com.jk.bstd to javafx.fxml;
     exports com.jk.bstd;
+    exports com.jk.bstd.entities;
 }

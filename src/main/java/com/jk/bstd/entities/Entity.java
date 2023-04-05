@@ -1,6 +1,6 @@
 package com.jk.bstd.entities;
 
-abstract class Entity {
+public abstract class Entity {
     // TODO: This needs to change depending on how we are implementing the grid system
     private Point point;
 

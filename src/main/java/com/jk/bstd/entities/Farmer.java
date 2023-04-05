@@ -5,20 +5,20 @@ import javafx.scene.image.ImageView;
 
 import java.util.Objects;
 
-public class Sprinkler extends Tower {
-    public static final int ATTACK = 5;
-    public static final int ATTACK_SPEED = 3;
-    public static final int RANGE = 3;
-    public static final int COST = 10;
+public class Farmer extends Tower {
+    public static final int ATTACK = 15;
+    public static final int ATTACK_SPEED = 5;
+    public static final int RANGE = 2;
+    public static final int COST = 20;
 
     private final Image img;
     private final ImageView imgView;
 
     //TODO: change the point
-    public Sprinkler(Point point) {
+    public Farmer(Point point) {
         super(point, ATTACK, ATTACK_SPEED, RANGE, COST);
         img = new Image(Objects.requireNonNull(getClass()
-                .getResource("/images/gameScreen/Sprinkler.png")).toExternalForm());
+                .getResource("/images/gameScreen/Farmer.png")).toExternalForm());
         imgView = new ImageView(img);
     }
 
@@ -27,7 +27,7 @@ public class Sprinkler extends Tower {
         int col = super.getY();
 
         int x = col * 64;
-        int y = (row + 3) * 64;
+        int y = (row + 3) * 64 - 64;
 
         imgView.setLayoutX(x);
         imgView.setLayoutY(y);
