@@ -22,6 +22,15 @@ public class Point {
         return y;
     }
 
+
+    public int getRealX() {
+        return (x + 1) * 64;
+    }
+
+    public int getRealY() {
+        return (y + 4) * 64;
+    }
+
     public void setX(int x) {
         this.x = x;
     }

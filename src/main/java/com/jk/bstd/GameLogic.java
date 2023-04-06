@@ -1,10 +1,10 @@
 package com.jk.bstd;
 
-import com.jk.bstd.components.Level;
 import com.jk.bstd.entities.*;
 import com.jk.bstd.ui.GameGrid;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public final class GameLogic {
@@ -32,67 +33,16 @@ public final class GameLogic {
     }
 
     public static void play(Player player, GameGrid gameGrid, GridPane gridPane, AnchorPane pane) {
-        int numEnemies;
-        if (player.getLevel() == 1) {
-            numEnemies = 10;
-        } else {
-            numEnemies = 20;
-        }
-
-//        create path
-        Path path = createPath(gameGrid.getPlacedTiles(), gridPane);
-        spawnEnemies(path, numEnemies, pane);
-
-
-}
-    public static void spawnEnemies(Path path, int numEnemies, AnchorPane pane) {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(2), event -> {
-             {
-                 // TODO: change this to a random animal
-                Chicken chicken = new Chicken();
-                spawnEnemy(pane, path, chicken);
+            int numEnemies;
+            if (player.getLevel() == 1) {
+                numEnemies = 1;
+            } else {
+                numEnemies = 20;
             }
-        }));
-        timeline.setCycleCount(numEnemies);
-        timeline.play();
+    //        create path
+            Path path = createPath(gameGrid.getPlacedTiles(), gridPane);
+            spawnEnemies(path, numEnemies, pane, gameGrid.getPlacedTowers(), player);
     }
-
-    public static void spawnEnemy(AnchorPane pane, Path path, Animal animal) {
-        PathTransition pt = new PathTransition(Duration.seconds(path.getElements().size()),path);
-        pt.setRate(1);
-        pt.setInterpolator(Interpolator.LINEAR);
-
-        ImageView imageView = animal.getImgView();
-        imageView.setTranslateX(128);
-        imageView.setTranslateY(224);
-        pane.getChildren().add(imageView);
-
-        pt.setNode(imageView);
-        pt.statusProperty().addListener(new ChangeListener<Animation.Status>() {
-            @Override
-            public void changed(ObservableValue<? extends Animation.Status> observableValue, Animation.Status status, Animation.Status t1) {
-                if (t1 == Animation.Status.STOPPED) {
-                    pane.getChildren().remove(imageView);
-                }
-            }
-        });
-
-        pt.play();
-    }
-
-    private static Point convertToGridPaneXandY(Point point, GridPane gridPane) {
-        double offsetX = gridPane.getLayoutX(); // 64
-        double offsetY = gridPane.getLayoutY(); // 256 = 64 * 4
-
-        int pointX = point.getX(); // 1
-        int pointY = point.getY(); // 0
-
-        int newY = (int) (pointY * GRID_SIZE + offsetY + 32); // 0 * 64 + 256 + 32 = 288
-        int newX = (int) (pointX * GRID_SIZE + offsetX + 32); // 64 + 2 * 64 = 192
-
-        return new Point(newX, newY);
-    }
-
 
     public static Path createPath(ArrayList<Tile> tiles, GridPane gridPane) {
         Path path = new Path();
@@ -117,6 +67,84 @@ public final class GameLogic {
         System.out.println(path.getElements());
         return path;
     }
+
+    private static void spawnEnemies(Path path, int numEnemies, AnchorPane pane, ArrayList<Tower> towers, Player player) {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(2), event -> {
+
+             {
+                 // TODO: change this to a random animal
+                Chicken chicken = new Chicken();
+                spawnEnemy(pane, path, chicken, towers, player);
+            }
+        }));
+        timeline.setCycleCount(numEnemies);
+        timeline.play();
+    }
+
+    private static void spawnEnemy(AnchorPane pane, Path path, Animal animal, ArrayList<Tower> towers, Player player) {
+        PathTransition pt = new PathTransition(Duration.seconds(path.getElements().size()),path);
+        ImageView imgView = animal.getImgView();
+        pt.setNode(imgView);
+        pt.setRate(1);
+        pt.setInterpolator(Interpolator.LINEAR);
+
+        imgView.setTranslateX(128);
+        imgView.setTranslateY(224);
+        pane.getChildren().add(imgView);
+
+
+        pt.currentTimeProperty().addListener((observableValue, duration, t1) -> {
+            Point2D enemyLocation = new Point2D(imgView.getTranslateX() + 32, imgView.getTranslateY() + 32);
+
+            for (Tower tower : towers) {
+                int towerX = tower.getPoint().getRealX() + 32;
+                int towerY = tower.getPoint().getRealY() + 32;
+                Point2D towerLocation = new Point2D(towerX, towerY);
+                if (enemyLocation.distance(towerLocation) < tower.getRange()  * 64 &&  !tower.getHasTarget()) {
+                    tower.setHasTarget(true);
+                    //TODO: want to attack
+                    tower.attackAnimation(enemyLocation, pane);
+                    animal.takeDamage(tower.getAttack());
+                    if (animal.getIsDead()) {
+                        pt.stop();
+                        pane.getChildren().remove(imgView);
+                        player.addMoney(animal.getGoldDropped());
+                    }
+
+                }
+            }
+
+        });
+        pt.statusProperty().addListener(new ChangeListener<Animation.Status>() {
+            @Override
+            public void changed(ObservableValue<? extends Animation.Status> observableValue, Animation.Status status, Animation.Status t1) {
+                if (t1 == Animation.Status.STOPPED && !animal.getIsDead()) {
+                    pane.getChildren().remove(imgView);
+                    System.out.println(" not dead");
+                    player.takeDamage(animal.getAttack());
+
+                }
+            }
+        });
+
+        pt.play();
+    }
+
+    private static Point convertToGridPaneXandY(Point point, GridPane gridPane) {
+        double offsetX = gridPane.getLayoutX(); // 64
+        double offsetY = gridPane.getLayoutY(); // 256 = 64 * 4
+
+        int pointX = point.getX(); // 1
+        int pointY = point.getY(); // 0
+
+        int newY = (int) (pointY * GRID_SIZE + offsetY + 32); // 0 * 64 + 256 + 32 = 288
+        int newX = (int) (pointX * GRID_SIZE + offsetX + 32); // 64 + 2 * 64 = 192
+
+        return new Point(newX, newY);
+    }
+
+
+
 
     public static void sellEntity(Entity entity, Player player) {
         int cost = entity.getCost();

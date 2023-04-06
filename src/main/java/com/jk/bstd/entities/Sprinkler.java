@@ -2,8 +2,8 @@ package com.jk.bstd.entities;
 
 public class Sprinkler extends Tower {
     public static final int ATTACK = 5;
-    public static final int ATTACK_SPEED = 3;
-    public static final int RANGE = 3;
+    public static final int ATTACK_SPEED = 1;
+    public static final int RANGE = 2;
     public static final int COST = 10;
 
     public Sprinkler(Point point) {
@@ -14,10 +14,6 @@ public class Sprinkler extends Tower {
         return COST;
     }
 
-    @Override
-    void attack() {
-        return;
-    }
 
     @Override
     void upgrade() {

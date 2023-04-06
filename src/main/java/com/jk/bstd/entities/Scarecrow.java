@@ -15,11 +15,6 @@ public class Scarecrow extends Tower {
     }
 
     @Override
-    void attack() {
-        return;
-    }
-
-    @Override
     void upgrade() {
         return;
     }

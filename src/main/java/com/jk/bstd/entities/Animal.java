@@ -5,7 +5,7 @@ public abstract class Animal extends Entity {
     private int speed;
     private int attack;
     private int goldDropped;
-    public Boolean isDead = false;
+    private Boolean isDead = false;
 
     public Animal(int health, int speed, int attack, int goldDropped) {
         super(new Point());
@@ -21,6 +21,9 @@ public abstract class Animal extends Entity {
             this.isDead = true;
         }
     }
+    public Boolean getIsDead() {
+        return this.isDead;
+    }
     public void setAlive(Boolean isDead) {
         this.isDead = isDead;
     }
@@ -29,5 +32,13 @@ public abstract class Animal extends Entity {
     }
     public int getHealth() {
         return this.health;
+    }
+
+    public int getGoldDropped() {
+        return goldDropped;
+    }
+
+    public int getAttack() {
+        return attack;
     }
 }
