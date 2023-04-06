@@ -14,10 +14,10 @@ import java.util.List;
 
 public class MainMenuView {
 
-    private static final int HEIGHT = 720;
+    private static final int HEIGHT = 832;
     private static final int WIDTH = 1280;
     private static final int BTN_START_X = 500;
-    private static final int BTN_START_Y = 200;
+    private static final int BTN_START_Y = 250;
 
     private final AnchorPane mainPane;
     private final Scene mainScene;
