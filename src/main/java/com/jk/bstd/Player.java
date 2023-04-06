@@ -24,7 +24,7 @@ public class Player {
     public Player() {
         this.money = 200;
         this.health = 100;
-        this.level = 1;
+        this.level = 0;
         this.isAlive = true;
         this.isSelling = false;
     }
@@ -80,8 +80,9 @@ public class Player {
     public Label getStats() {
         stats = new Label();
         stats.setText("Money: " + this.money + "\nHealth: " + this.health + "\nLevel: " + this.level);
+        stats.setFont(Font.font("Comic Sans", FontWeight.BOLD, 25));
         stats.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
-        stats.setLayoutX(30);
+        stats.setLayoutX(630);
         stats.setLayoutY(30);
         return stats;
     }
@@ -92,5 +93,10 @@ public class Player {
         });
     }
 
-
+    public void resetLevel() {
+        this.money = 200;
+        this.health = 100;
+        this.isAlive = true;
+        this.isSelling = false;
+    }
 }

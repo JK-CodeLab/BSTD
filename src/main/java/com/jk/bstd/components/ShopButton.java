@@ -47,14 +47,14 @@ public class ShopButton extends Button {
 
 
             ImageView iv = new ImageView(itemImg);
-            double offsetX = 32;
-            double offsetY = 32;
+            double offsetX = 0;
+            double offsetY = 0;
 
             if (itemName.equals("Tile") || itemName.equals("Sprinkler")) {
                 iv.setFitHeight(64);
             } else {
                 iv.setFitHeight(128);
-                offsetY *= 3;
+                offsetY += 32;
             }
             iv.setFitWidth(64);
 

@@ -9,7 +9,7 @@ public class Chicken extends Animal {
     public static final int HEALTH = 200;
     public static final int SPEED = 4;
     public static final int ATTACK = 10;
-    public static final int GOLD_DROPPED = 15;
+    public static final int GOLD_DROPPED = 5;
     public ImageView imgView;
     public Image img;
 

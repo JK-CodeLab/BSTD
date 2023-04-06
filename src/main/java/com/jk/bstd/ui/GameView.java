@@ -136,6 +136,13 @@ public class GameView extends View {
                 int numTiles = gameGrid.getNumTiles();
                 Point lastTilePoint = gameGrid.getPlacedTiles().get(numTiles - 1).getPoint();
                 if (lastTilePoint.getX() == 12 && lastTilePoint.getY() == 0) {
+                    if (player.getHealth() >= 0) {
+                        player.setLevel(player.getLevel() + 1);
+                        player.updateStats();
+                    } else {
+                        player.resetLevel();
+                        player.updateStats();
+                    }
                     GameLogic.play(player, gameGrid, gridPane, super.getMainPane());
                 }
             });

@@ -35,11 +35,16 @@ public final class GameLogic {
     public static void play(Player player, GameGrid gameGrid, GridPane gridPane, AnchorPane pane) {
             int numEnemies;
             if (player.getLevel() == 1) {
-                numEnemies = 1;
+                numEnemies = 15;
+            } else if (player.getLevel() == 2) {
+                numEnemies = 25;
+            } else if (player.getLevel() == 3) {
+                numEnemies = 35;
             } else {
-                numEnemies = 20;
+                numEnemies = 50;
             }
     //        create path
+
             Path path = createPath(gameGrid.getPlacedTiles(), gridPane);
             spawnEnemies(path, numEnemies, pane, gameGrid.getPlacedTowers(), player);
     }
@@ -69,7 +74,8 @@ public final class GameLogic {
     }
 
     private static void spawnEnemies(Path path, int numEnemies, AnchorPane pane, ArrayList<Tower> towers, Player player) {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(2), event -> {
+        double speed = 1.5 / player.getLevel();
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(speed), event -> {
 
              {
                  // TODO: change this to a random animal
@@ -79,10 +85,16 @@ public final class GameLogic {
         }));
         timeline.setCycleCount(numEnemies);
         timeline.play();
+
+        timeline.setOnFinished(event -> {
+            player.setAlive(player.getHealth() > 0);
+        });
     }
 
     private static void spawnEnemy(AnchorPane pane, Path path, Animal animal, ArrayList<Tower> towers, Player player) {
         PathTransition pt = new PathTransition(Duration.seconds(path.getElements().size()),path);
+//        PathTransition pt = new PathTransition(Duration.seconds(5), path);
+
         ImageView imgView = animal.getImgView();
         pt.setNode(imgView);
         pt.setRate(1);
@@ -102,7 +114,6 @@ public final class GameLogic {
                 Point2D towerLocation = new Point2D(towerX, towerY);
                 if (enemyLocation.distance(towerLocation) < tower.getRange()  * 64 &&  !tower.getHasTarget()) {
                     tower.setHasTarget(true);
-                    //TODO: want to attack
                     tower.attackAnimation(enemyLocation, pane);
                     animal.takeDamage(tower.getAttack());
                     if (animal.getIsDead()) {
@@ -111,10 +122,12 @@ public final class GameLogic {
                         player.addMoney(animal.getGoldDropped());
                         player.updateStats();
                     }
-
                 }
             }
-
+//            if (player.getHealth() < 0) {
+//                player.setAlive(false);
+//                System.out.println("Game Over");
+//            }
         });
         pt.statusProperty().addListener(new ChangeListener<Animation.Status>() {
             @Override
@@ -126,8 +139,8 @@ public final class GameLogic {
                 }
             }
         });
-
         pt.play();
+        // if player isAlive and animation is over, set player level to next level
     }
 
     private static Point convertToGridPaneXandY(Point point, GridPane gridPane) {
@@ -152,8 +165,10 @@ public final class GameLogic {
     }
 
     public static void buyEntity(AnchorPane pane, Entity entity, ImageView imgView, Player player) {
-        pane.getChildren().add(imgView);
-        int cost = entity.getCost();
-        player.removeMoney(cost);
+        if (player.getMoney() - entity.getCost() > 0) {
+            pane.getChildren().add(imgView);
+            int cost = entity.getCost();
+            player.removeMoney(cost);
+        }
     }
 }
