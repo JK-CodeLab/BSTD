@@ -32,11 +32,11 @@ public final class GameLogic {
         double offsetX = gridPane.getLayoutX(); // 64
         double offsetY = gridPane.getLayoutY(); // 256 = 64 * 4
 
-        int row = point.getX(); // 0
-        int col = point.getY(); // 2
+        int pointX = point.getX(); // 1
+        int pointY = point.getY(); // 0
 
-        int newY = (int) (row * GRID_SIZE + offsetY + 32); // 256 + 0 * 64 = 256
-        int newX = (int) (col * GRID_SIZE + offsetX + 32); // 64 + 2 * 64 = 192
+        int newY = (int) (pointY * GRID_SIZE + offsetY + 32); // 0 * 64 + 256 + 32 = 288
+        int newX = (int) (pointX * GRID_SIZE + offsetX + 32); // 64 + 2 * 64 = 192
 
         return new Point(newX, newY);
     }

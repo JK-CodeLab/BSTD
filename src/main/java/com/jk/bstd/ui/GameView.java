@@ -26,8 +26,6 @@ import java.util.Objects;
 
 import com.jk.bstd.GameLogic;
 
-import static com.jk.bstd.GameLogic.spawnAnimals;
-
 
 public class GameView extends View {
 
