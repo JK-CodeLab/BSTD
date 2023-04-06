@@ -1,8 +1,6 @@
 package com.jk.bstd.entities;
 
-import javafx.scene.image.ImageView;
-
-abstract class Animal extends Entity {
+public abstract class Animal extends Entity {
     private int health;
     private int speed;
     private int attack;
@@ -16,12 +14,7 @@ abstract class Animal extends Entity {
         this.attack = attack;
         this.goldDropped = goldDropped;
     }
-
-    @Override
-    public ImageView getImgView() {
-        return imgView;
-    }
-
+    abstract void move();
     public void takeDamage(int damage) {
         this.health -= damage;
         if (this.health <= 0) {

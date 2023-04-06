@@ -1,6 +1,13 @@
 package com.jk.bstd;
 
 import com.jk.bstd.entities.Tower;
+import javafx.application.Platform;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +40,10 @@ public class Player {
         this.money += money;
     }
 
+    public void removeMoney(int money) {
+        this.money -= money;
+    }
+
     public int getHealth() {
         return health;
     }
@@ -63,5 +74,14 @@ public class Player {
 
     public void setSelling(boolean selling) {
         isSelling = selling;
+    }
+
+    public Label getStats() {
+        Label stats = new Label();
+        stats.setText("Money: " + this.money + "\nHealth: " + this.health + "\nLevel: " + this.level);
+        stats.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+        stats.setLayoutX(30);
+        stats.setLayoutY(30);
+        return stats;
     }
 }

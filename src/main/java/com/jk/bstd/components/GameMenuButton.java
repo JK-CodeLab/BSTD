@@ -23,10 +23,6 @@ public class GameMenuButton extends Button {
         initializeButtonListeners();
     }
 
-    public void setSelling(boolean selling) {
-        this.selling = selling;
-    }
-
     public boolean isSelling() {
         return selling;
     }
@@ -78,8 +74,8 @@ public class GameMenuButton extends Button {
         });
     }
 
-    public void sell(Player player) {
-        player.setSelling(selling);
-    }
+//    public void sell(Player player) {
+//        player.setSelling(selling);
+//    }
 
 }

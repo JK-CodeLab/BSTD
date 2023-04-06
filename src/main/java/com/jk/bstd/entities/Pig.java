@@ -22,6 +22,11 @@ public class Pig extends Animal {
         imgView = new ImageView(img);
     }
 
+    // TODO: Implement move method
+    // pig should move 2 space per 0.5 unit of time
+    // this makes it so it moves the same speed as the chicken since the model is twice as big
+    @Override
+    public void move() {}
     // TODO: Fix get imgview
     @Override
     public ImageView getImgView() {
