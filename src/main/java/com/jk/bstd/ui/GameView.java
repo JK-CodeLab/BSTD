@@ -118,7 +118,6 @@ public class GameView extends View {
         gridPane.setOnDragOver(this::acceptCopy);
 
         gridPane.setOnDragDropped(event -> {
-            System.out.println("drag dropped");
             if (event.getGestureSource() instanceof ShopButton) {
                 String item = event.getDragboard().getString();
                 Point mousePoint = getPointFromMousePosition(event);
@@ -151,18 +150,6 @@ public class GameView extends View {
                         gameGrid.addEntity(placedEntity);
                         super.addToMainPane(placedEntity.getImgView());
                     }
-
-//                    int cost = placedEntity.getCost();
-//
-//                    entityImage.setOnMouseClicked(event1 -> {
-//                        if (event1.getButton() == MouseButton.PRIMARY && player.isSelling()) {
-//                            gridPane.getChildren().remove(entityImage);
-//                            player.addMoney(cost);
-//                            super.getMainPane().getChildren().remove(entityImage);
-//                            System.out.println("money: " + player.getMoney()); // TODO: Remove this
-//                        }
-//                    });
-
                 }
             }
             event.setDropCompleted(true);
@@ -176,7 +163,7 @@ public class GameView extends View {
     private void printTileLocations() {
         System.out.println("Tile locations: ");
         for (Entity entity : gameGrid.getPlacedTiles()) {
-            System.out.println("\trow: " + entity.getPoint().getX() + " col: " + entity.getPoint().getY());
+            System.out.println("\tx: " + entity.getPoint().getX() + "\ty: " + entity.getPoint().getY());
         }
     }
 
@@ -186,15 +173,15 @@ public class GameView extends View {
     }
 
     private boolean isGridEmpty(Point point) {
-        int row = point.getX();
-        int col = point.getY();
+        int pointX = point.getX();
+        int pointY = point.getY();
         for (Entity entity : gameGrid.getPlacedTiles()) {
-            if (entity.getX() == row && entity.getY() == col) {
+            if (entity.getX() == pointX && entity.getY() == pointY) {
                 return false;
             }
         }
         for (Entity entity : gameGrid.getPlacedTowers()) {
-            if (entity.getX() == row && entity.getY() == col) {
+            if (entity.getX() == pointX && entity.getY() == pointY) {
                 return false;
             }
         }
@@ -205,16 +192,16 @@ public class GameView extends View {
         int indexLastTile = gameGrid.getPlacedTiles().size() - 1;
         Point lastPoint = gameGrid.getPlacedTiles().get(indexLastTile).getPoint();
 
-        int lastRow = lastPoint.getX();
-        int lastCol = lastPoint.getY();
+        int lastPointX = lastPoint.getX();
+        int lastPointY = lastPoint.getY();
 
-        int currRow = currentPosition.getX();
-        int currCol = currentPosition.getY();
+        int currX = currentPosition.getX();
+        int currY = currentPosition.getY();
 
-        if (currRow == lastRow && (currCol == lastCol + 1 || currCol == lastCol - 1)) {
+        if (currX == lastPointX && (currY == lastPointY + 1 || currY == lastPointY - 1)) {
             return true;
         }
-        return currCol == lastCol && (currRow == lastRow + 1 || currRow == lastRow - 1);
+        return currY == lastPointY && (currX == lastPointX + 1 || currX == lastPointX - 1);
     }
 
     private void acceptCopy(DragEvent e) {
@@ -222,7 +209,6 @@ public class GameView extends View {
             e.acceptTransferModes(TransferMode.COPY);
         }
         e.consume();
-        System.out.println("drag over");
     }
 
     private Point getPointFromMousePosition(DragEvent e) {
@@ -235,9 +221,9 @@ public class GameView extends View {
         int y = (int) (mouseY - (mouseY % 64));
 
         // get the row and column of the grid
-        int row = y/64 - 4;
-        int col = x/64 - 1;
+        int pointX = x/64 - 1;
+        int pointY = y/64 - 4;
 
-        return new Point(row, col);
+        return new Point(pointX, pointY);
     }
 }

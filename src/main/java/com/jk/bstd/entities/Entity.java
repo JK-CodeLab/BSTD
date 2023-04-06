@@ -18,16 +18,16 @@ public abstract class Entity {
     }
 
     public ImageView getImgView() {
-        int row = point.getX();
-        int col = point.getY();
+        int pointX = point.getX();
+        int pointY = point.getY();
         int x, y;
 
         if (name.equals("Tile") || name.equals("Sprinkler")) {
-             x = (col + 1) * 64;
-             y = (row + 4) * 64;
+             x = (pointX + 1) * 64;
+             y = (pointY + 4) * 64;
         } else {
-             x = (col + 1) * 64;
-             y = (row + 4) * 64 - 64;
+             x = (pointX + 1) * 64;
+             y = (pointY + 4) * 64 - 64;
         }
 
         imgView.setLayoutX(x);
