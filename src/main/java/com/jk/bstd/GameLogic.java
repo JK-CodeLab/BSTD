@@ -30,7 +30,8 @@ public final class GameLogic {
     private GameLogic() throws IllegalAccessException {
         throw new IllegalAccessException("Cannot instantiate GameLogic");
     }
-public static void play(Player player, GameGrid gameGrid, GridPane gridPane, AnchorPane pane) {
+
+    public static void play(Player player, GameGrid gameGrid, GridPane gridPane, AnchorPane pane) {
         int numEnemies;
         if (player.getLevel() == 1) {
             numEnemies = 10;
@@ -57,17 +58,15 @@ public static void play(Player player, GameGrid gameGrid, GridPane gridPane, Anc
     }
 
     public static void spawnEnemy(AnchorPane pane, Path path, Animal animal) {
-//        Chicken chicken = new Chicken();
-
-
-
         PathTransition pt = new PathTransition(Duration.seconds(path.getElements().size()),path);
         pt.setRate(1);
         pt.setInterpolator(Interpolator.LINEAR);
+
         ImageView imageView = animal.getImgView();
         imageView.setTranslateX(128);
         imageView.setTranslateY(224);
         pane.getChildren().add(imageView);
+
         pt.setNode(imageView);
         pt.statusProperty().addListener(new ChangeListener<Animation.Status>() {
             @Override

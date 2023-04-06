@@ -137,8 +137,7 @@ public class GameView extends View {
             });
             case "sellBtn" -> menuBtn.setOnMouseClicked(event -> {
                 player.setSelling(menuBtn.isSelling());
-                System.out.println(player.isSelling());
-//                menuBtn.sell(player);
+                System.out.println("Selling: " + player.isSelling());
             });
         }
     }
@@ -192,7 +191,7 @@ public class GameView extends View {
             }
             event.setDropCompleted(true);
             event.consume();
-            updatePlayerStats();
+            player.updateStats();
 
             // TODO: Remove this (debugging)
             printTileLocations();
@@ -207,8 +206,11 @@ public class GameView extends View {
     }
 
     private void addFirstTileToMainPane() {
-        ImageView firstTile = gameGrid.getPlacedTiles().get(0).getImgView();
-        super.addToMainPane(firstTile);
+        for (Entity entity : gameGrid.getPlacedTiles()) {
+            super.addToMainPane(entity.getImgView());
+        }
+//        ImageView firstTile = gameGrid.getPlacedTiles().get(0).getImgView();
+//        super.addToMainPane(firstTile);
     }
 
     private boolean isGridEmpty(Point point) {
@@ -257,14 +259,8 @@ public class GameView extends View {
             super.getMainPane().getChildren().remove(entity.getImgView());
 
             GameLogic.sellEntity(entity, player);
-            updatePlayerStats();
+            player.updateStats();
         }
-    }
-
-    public void updatePlayerStats() {
-        Platform.runLater(() -> {
-            playerStats.setText("Money: " + player.getMoney() + "\nHealth: " + player.getHealth() + "\nLevel: " + player.getLevel());
-        });
     }
 
     private Point getPointFromMousePosition(DragEvent e) {

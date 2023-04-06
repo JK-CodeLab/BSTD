@@ -19,9 +19,10 @@ public class Player {
     private boolean isAlive;
     private boolean isSelling;
     private List<Tower> towers = new ArrayList<>();
+    private Label stats;
 
     public Player() {
-        this.money = 100;
+        this.money = 200;
         this.health = 100;
         this.level = 1;
         this.isAlive = true;
@@ -77,11 +78,17 @@ public class Player {
     }
 
     public Label getStats() {
-        Label stats = new Label();
+        stats = new Label();
         stats.setText("Money: " + this.money + "\nHealth: " + this.health + "\nLevel: " + this.level);
         stats.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
         stats.setLayoutX(30);
         stats.setLayoutY(30);
         return stats;
+    }
+
+    public void updateStats() {
+        Platform.runLater(() -> {
+            stats.setText("Money: " + this.money + "\nHealth: " + this.health + "\nLevel: " + this.level);
+        });
     }
 }
