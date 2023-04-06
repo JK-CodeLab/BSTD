@@ -49,6 +49,10 @@ public class GameGrid {
         setFirstTile();
     }
 
+    public int getNumTiles() {
+        return placedTiles.size();
+    }
+
     private void setFirstTile() {
         //TODO: remove, just for testing
         Tile firstTile = new Tile(new Point(1, 0));

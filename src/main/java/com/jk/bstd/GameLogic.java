@@ -109,6 +109,7 @@ public final class GameLogic {
                         pt.stop();
                         pane.getChildren().remove(imgView);
                         player.addMoney(animal.getGoldDropped());
+                        player.updateStats();
                     }
 
                 }
@@ -120,9 +121,8 @@ public final class GameLogic {
             public void changed(ObservableValue<? extends Animation.Status> observableValue, Animation.Status status, Animation.Status t1) {
                 if (t1 == Animation.Status.STOPPED && !animal.getIsDead()) {
                     pane.getChildren().remove(imgView);
-                    System.out.println(" not dead");
                     player.takeDamage(animal.getAttack());
-
+                    player.updateStats();
                 }
             }
         });

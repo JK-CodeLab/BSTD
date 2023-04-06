@@ -6,6 +6,7 @@ import javafx.animation.TranslateTransition;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -34,7 +35,8 @@ public abstract class Tower extends Entity{
     }
     public void attackAnimation(Point2D enemyLocation, AnchorPane pane) {
         //TODO: add projectile image to the game remove temp rectangle
-        Rectangle bullet = new Rectangle(8, 8, Color.YELLOW);
+        Circle bullet = new Circle(4, Color.BLUE);
+//        Rectangle bullet = new Rectangle(8, 8, Color.BLUE);
         bullet.setTranslateX(super.getPoint().getRealX() + 32);
         bullet.setTranslateY(super.getPoint().getRealY() + 32);
         pane.getChildren().add(bullet);

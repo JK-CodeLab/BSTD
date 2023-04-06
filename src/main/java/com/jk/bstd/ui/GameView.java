@@ -133,7 +133,11 @@ public class GameView extends View {
             case "menuBtn" -> menuBtn.setOnMouseClicked(event -> exitGame()); // TODO: implement this method
             case "playBtn" -> menuBtn.setOnMouseClicked(event -> {
                 System.out.println("Play button clicked");
-                GameLogic.play(player, gameGrid, gridPane, super.getMainPane());
+                int numTiles = gameGrid.getNumTiles();
+                Point lastTilePoint = gameGrid.getPlacedTiles().get(numTiles - 1).getPoint();
+                if (lastTilePoint.getX() == 12 && lastTilePoint.getY() == 0) {
+                    GameLogic.play(player, gameGrid, gridPane, super.getMainPane());
+                }
             });
             case "sellBtn" -> menuBtn.setOnMouseClicked(event -> {
                 player.setSelling(menuBtn.isSelling());
