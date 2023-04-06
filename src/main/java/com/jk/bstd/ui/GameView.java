@@ -138,7 +138,6 @@ public class GameView extends View {
 
                 Entity placedEntity = null;
                 if (isEmpty) {
-                    System.out.println("is empty");
                     switch (item) {
                         case "Tile" -> {;
                             boolean isAdjacent = isAdjacent(mousePoint);
@@ -156,6 +155,9 @@ public class GameView extends View {
                         }
                         case "Farmer" -> {
                             placedEntity = new Farmer(mousePoint);
+                        }
+                        case "Dog" -> {
+                            placedEntity = new Dog(mousePoint);
                         }
                     }
                     if (placedEntity != null) {

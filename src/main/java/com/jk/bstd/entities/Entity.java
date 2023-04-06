@@ -4,7 +4,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public abstract class Entity {
-    // TODO: This needs to change depending on how we are implementing the grid system
     private Point point;
     private String name;
     private Image img;
@@ -56,5 +55,4 @@ public abstract class Entity {
     public void setY(int y) {
         this.point.setY(y);
     }
-//    public abstract ImageView getImgView();
 }
