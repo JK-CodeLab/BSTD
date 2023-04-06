@@ -4,27 +4,22 @@ import com.jk.bstd.Player;
 import com.jk.bstd.components.GameMenuButton;
 import com.jk.bstd.components.ShopButton;
 import com.jk.bstd.entities.*;
-import javafx.event.Event;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 import com.jk.bstd.GameLogic;
+
+import static com.jk.bstd.GameLogic.animatePath;
 
 
 public class GameView extends View {
@@ -116,9 +111,13 @@ public class GameView extends View {
         switch (btnName) {
             case "menuBtn" -> menuBtn.setOnMouseClicked(event -> exitGame()); // TODO: implement this method
             case "playBtn" -> menuBtn.setOnMouseClicked(event -> {
-                System.out.println("Play button clicked");
                 Path path = GameLogic.createPath(gameGrid.getPlacedTiles(), gridPane);
                 super.getMainPane().getChildren().add(path);
+                Sprinkler sprinkler = new Sprinkler(new Point(0, 0));
+                ImageView imgView = sprinkler.getImgView();
+                super.getMainPane().getChildren().add(imgView);
+                animatePath(path, imgView);
+
 //                spawnAnimals();
             }); // TODO: implement this method
             case "sellBtn" -> menuBtn.setOnMouseClicked(event -> menuBtn.sell(player));

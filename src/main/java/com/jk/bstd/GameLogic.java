@@ -4,6 +4,7 @@ import com.jk.bstd.entities.Point;
 import com.jk.bstd.entities.Tile;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
@@ -58,5 +59,21 @@ public final class GameLogic {
         }
         System.out.println(path.getElements());
         return path;
+    }
+
+    public static void animatePath(Path path, ImageView imgView) {
+        PathTransition pathTransition = new PathTransition();
+        pathTransition.setDuration(Duration.millis(10000));
+        pathTransition.setPath(path);
+        pathTransition.setNode(imgView);
+        pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+        pathTransition.setCycleCount(1);
+        pathTransition.setAutoReverse(false);
+        pathTransition.play();
+        System.out.println("animation playing");
+    }
+
+    public static void spawnAnimals() {
+
     }
 }
