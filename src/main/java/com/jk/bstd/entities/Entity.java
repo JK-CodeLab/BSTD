@@ -7,7 +7,7 @@ public abstract class Entity {
     private Point point;
     private String name;
     private Image img;
-    public ImageView imgView;
+    private ImageView imgView;
 
     public Entity(Point point) {
         this.point = point;
@@ -33,9 +33,8 @@ public abstract class Entity {
         imgView.setLayoutY(y);
         return imgView;
     }
-
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public Point getPoint() {

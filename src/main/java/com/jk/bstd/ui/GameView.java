@@ -4,22 +4,36 @@ import com.jk.bstd.Player;
 import com.jk.bstd.components.GameMenuButton;
 import com.jk.bstd.components.ShopButton;
 import com.jk.bstd.entities.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.PathTransition;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 import com.jk.bstd.GameLogic;
-
-import static com.jk.bstd.GameLogic.animatePath;
+import javafx.util.Duration;
 
 
 public class GameView extends View {
@@ -29,6 +43,7 @@ public class GameView extends View {
     private GameGrid gameGrid = new GameGrid();
     private GridPane gridPane = gameGrid.getGridPane();
     private List<ShopButton> shopButtons;
+    private Label playerStats;
     private final List<String> gameMenuButtons = Arrays.asList("menuBtn", "playBtn", "sellBtn");
     private final int SHOP_BTN_START_X = 1008;
     private final int SHOP_BTN_START_Y = 66;
@@ -38,6 +53,7 @@ public class GameView extends View {
         Tower tower = new Scarecrow(new Point(0, 0));
         player = new Player(); // TODO: get player from main menu, or create new player
         shopButtons = new ArrayList<>();
+        playerStats = player.getStats();
         createBackground("gameScreen/gameBg.png");
         createShop();
 
@@ -48,6 +64,7 @@ public class GameView extends View {
         addGridPaneToMainPane();
         initializeGameGrid();
         addFirstTileToMainPane();
+        displayPlayerStats();
     }
 
     public void createNewGame(Stage mainMenu) {
@@ -69,6 +86,10 @@ public class GameView extends View {
 
     private void addGridPaneToMainPane() {
         super.addToMainPane(gridPane);
+    }
+
+    private void displayPlayerStats() {
+        super.addToMainPane(playerStats);
     }
 
     public void createShop() {
@@ -111,19 +132,16 @@ public class GameView extends View {
         switch (btnName) {
             case "menuBtn" -> menuBtn.setOnMouseClicked(event -> exitGame()); // TODO: implement this method
             case "playBtn" -> menuBtn.setOnMouseClicked(event -> {
-                Path path = GameLogic.createPath(gameGrid.getPlacedTiles(), gridPane);
-                super.getMainPane().getChildren().add(path);
-                Sprinkler sprinkler = new Sprinkler(new Point(0, 0));
-                ImageView imgView = sprinkler.getImgView();
-                super.getMainPane().getChildren().add(imgView);
-                animatePath(path, imgView);
-
-//                spawnAnimals();
-            }); // TODO: implement this method
-            case "sellBtn" -> menuBtn.setOnMouseClicked(event -> menuBtn.sell(player));
+                System.out.println("Play button clicked");
+                GameLogic.play(player, gameGrid, gridPane, super.getMainPane());
+            });
+            case "sellBtn" -> menuBtn.setOnMouseClicked(event -> {
+                player.setSelling(menuBtn.isSelling());
+                System.out.println(player.isSelling());
+//                menuBtn.sell(player);
+            });
         }
     }
-
 
     private void initializeGameGrid() {
         gridPane.setOnDragOver(this::acceptCopy);
@@ -160,18 +178,25 @@ public class GameView extends View {
                         }
                     }
                     if (placedEntity != null) {
+                        ImageView entityImgView = placedEntity.getImgView();
+
                         gameGrid.addEntity(placedEntity);
-                        super.addToMainPane(placedEntity.getImgView());
+//                        super.addToMainPane(entityImgView);
+
+                        GameLogic.buyEntity(super.getMainPane(), placedEntity, entityImgView, player);
+
+                        Entity finalPlacedEntity = placedEntity;
+                        entityImgView.setOnMouseClicked(e -> onEntityClicked(e, finalPlacedEntity));
                     }
                 }
             }
             event.setDropCompleted(true);
             event.consume();
+            updatePlayerStats();
 
             // TODO: Remove this (debugging)
             printTileLocations();
         });
-
     }
 
     private void printTileLocations() {
@@ -223,6 +248,23 @@ public class GameView extends View {
             e.acceptTransferModes(TransferMode.COPY);
         }
         e.consume();
+    }
+
+    private void onEntityClicked(MouseEvent e, Entity entity) {
+        if (player.isSelling()) {
+            System.out.println("entity sold: " + entity.getName());
+            gameGrid.removeEntity(entity);
+            super.getMainPane().getChildren().remove(entity.getImgView());
+
+            GameLogic.sellEntity(entity, player);
+            updatePlayerStats();
+        }
+    }
+
+    public void updatePlayerStats() {
+        Platform.runLater(() -> {
+            playerStats.setText("Money: " + player.getMoney() + "\nHealth: " + player.getHealth() + "\nLevel: " + player.getLevel());
+        });
     }
 
     private Point getPointFromMousePosition(DragEvent e) {

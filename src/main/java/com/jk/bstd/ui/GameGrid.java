@@ -73,4 +73,12 @@ public class GameGrid {
             placedTowers.add((Tower) entity);
         }
     }
+
+    public void removeEntity(Entity entity) {
+        if (entity instanceof Tile) {
+            placedTiles.remove(entity);
+        } else if (entity instanceof Tower) {
+            placedTowers.remove(entity);
+        }
+    }
 }
