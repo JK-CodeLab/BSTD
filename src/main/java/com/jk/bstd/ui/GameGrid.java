@@ -50,6 +50,7 @@ public class GameGrid {
     }
 
     private void setFirstTile() {
+        //TODO: remove, just for testing
         Tile firstTile = new Tile(new Point(1, 0));
         placedTiles.add(firstTile);
         placedTiles.add(new Tile(new Point(1, 1)));
@@ -76,7 +77,6 @@ public class GameGrid {
         placedTiles.add(new Tile(new Point(12, 1)));
         placedTiles.add(new Tile(new Point(12, 0)));
     }
-
     public ArrayList<Tower> getPlacedTowers() {
         return placedTowers;
     }

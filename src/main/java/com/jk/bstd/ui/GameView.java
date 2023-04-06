@@ -206,6 +206,7 @@ public class GameView extends View {
     }
 
     private void addFirstTileToMainPane() {
+        // TODO: remove, just for testing
         for (Entity entity : gameGrid.getPlacedTiles()) {
             super.addToMainPane(entity.getImgView());
         }
