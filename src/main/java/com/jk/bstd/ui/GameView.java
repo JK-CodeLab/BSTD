@@ -12,13 +12,19 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import com.jk.bstd.GameLogic;
 
 
 public class GameView extends View {
@@ -34,6 +40,7 @@ public class GameView extends View {
 
     public GameView() {
         super();
+        Tower tower = new Scarecrow(new Point(0, 0));
         player = new Player(); // TODO: get player from main menu, or create new player
         shopButtons = new ArrayList<>();
         createBackground("gameScreen/gameBg.png");
@@ -108,7 +115,11 @@ public class GameView extends View {
 
         switch (btnName) {
             case "menuBtn" -> menuBtn.setOnMouseClicked(event -> exitGame()); // TODO: implement this method
-//            case "playBtn" -> menuBtn.setOnMouseClicked(event -> startRound()); // TODO: implement this method
+            case "playBtn" -> menuBtn.setOnMouseClicked(event -> {
+                System.out.println("Play button clicked");
+                Path path = GameLogic.createPath(gameGrid.getPlacedTiles(), gridPane);
+                super.getMainPane().getChildren().add(path);
+            }); // TODO: implement this method
             case "sellBtn" -> menuBtn.setOnMouseClicked(event -> menuBtn.sell(player));
         }
     }
@@ -158,6 +169,7 @@ public class GameView extends View {
             // TODO: Remove this (debugging)
             printTileLocations();
         });
+
     }
 
     private void printTileLocations() {
