@@ -26,6 +26,8 @@ import java.util.Objects;
 
 import com.jk.bstd.GameLogic;
 
+import static com.jk.bstd.GameLogic.spawnAnimals;
+
 
 public class GameView extends View {
 
@@ -119,6 +121,7 @@ public class GameView extends View {
                 System.out.println("Play button clicked");
                 Path path = GameLogic.createPath(gameGrid.getPlacedTiles(), gridPane);
                 super.getMainPane().getChildren().add(path);
+//                spawnAnimals();
             }); // TODO: implement this method
             case "sellBtn" -> menuBtn.setOnMouseClicked(event -> menuBtn.sell(player));
         }
