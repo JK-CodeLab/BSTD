@@ -29,7 +29,7 @@ public class GameGrid {
         // TODO: Remove this line (for testing purposes)
         gridPane.setGridLinesVisible(true);
 
-        gridPane.setPrefSize(ROWS * GRID_SIZE, COLUMNS * GRID_SIZE);
+        gridPane.setPrefSize(COLUMNS * GRID_SIZE, ROWS * GRID_SIZE);
         gridPane.setLayoutY(GRID_SIZE * 4);
         gridPane.setLayoutX(GRID_SIZE);
 
@@ -50,7 +50,7 @@ public class GameGrid {
     }
 
     private void setFirstTile() {
-        Tile firstTile = new Tile(new Point(0, 1));
+        Tile firstTile = new Tile(new Point(1, 0));
         placedTiles.add(firstTile);
     }
 
