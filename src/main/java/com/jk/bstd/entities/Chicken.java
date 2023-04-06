@@ -18,7 +18,7 @@ public class Chicken extends Animal {
         // TODO: Change image
         super(HEALTH, SPEED, ATTACK, GOLD_DROPPED);
         img = new Image(Objects.requireNonNull(getClass()
-                .getResource("/images/gameScreen/Sprinkler.png")).toExternalForm());
+                .getResource("/images/entities/Chicken.png")).toExternalForm());
         imgView = new ImageView(img);
     }
     // TODO: Implement move method
