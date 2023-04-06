@@ -47,14 +47,28 @@ public class ShopButton extends Button {
 
 
             ImageView iv = new ImageView(itemImg);
-            double offsetX = 0;
-            double offsetY = 0;
+            boolean tileOrSprinkler = itemName.equals("Tile") || itemName.equals("Sprinkler");
+            double offsetX, offsetY;
+            if (OSPlatform.isWindows()) {
+                System.out.println("Windows");
+                offsetX = 32;
+                offsetY = 32;
+                if (!tileOrSprinkler) {
+                    offsetY *= 3;
+                }
+            } else {
+                System.out.println("Mac");
+                offsetX = 0;
+                offsetY = 0;
+                if (!tileOrSprinkler) {
+                    offsetY += 32;
+                }
+            }
 
-            if (itemName.equals("Tile") || itemName.equals("Sprinkler")) {
+            if (tileOrSprinkler) {
                 iv.setFitHeight(64);
             } else {
                 iv.setFitHeight(128);
-                offsetY += 32;
             }
             iv.setFitWidth(64);
 
