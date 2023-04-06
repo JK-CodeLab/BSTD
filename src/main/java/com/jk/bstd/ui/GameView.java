@@ -66,7 +66,7 @@ public class GameView extends View {
     }
 
     private void addGridPaneToMainPane() {
-        super.getMainPane().getChildren().add(gridPane);
+        super.addToMainPane(gridPane);
     }
 
     public void createShop() {
@@ -74,7 +74,7 @@ public class GameView extends View {
         ImageView shopView = new ImageView(shopImg);
         shopView.setX(960);
         shopView.setY(0);
-        super.getMainPane().getChildren().add(shopView);
+        super.addToMainPane(shopView);
 
         createShopButtons();
     }
@@ -83,15 +83,15 @@ public class GameView extends View {
         shopBtn.setLayoutX(SHOP_BTN_START_X);
         shopBtn.setLayoutY(SHOP_BTN_START_Y + shopButtons.size() * 128);
         shopButtons.add(shopBtn);
-        super.getMainPane().getChildren().add(shopBtn);
+        super.addToMainPane(shopBtn);
     }
 
     public void createShopButtons() {
-        ShopButton shopPath = new ShopButton("shopPath", false);
-        ShopButton shopSprinkler = new ShopButton("shopSprinkler", false);
-        ShopButton shopScarecrow = new ShopButton("shopScarecrow", false);
-        ShopButton shopDog = new ShopButton("shopDog", false);
-        ShopButton shopFarmer = new ShopButton("shopFarmer", false);
+        ShopButton shopPath = new ShopButton("shopTile");
+        ShopButton shopSprinkler = new ShopButton("shopSprinkler");
+        ShopButton shopScarecrow = new ShopButton("shopScarecrow");
+        ShopButton shopDog = new ShopButton("shopDog");
+        ShopButton shopFarmer = new ShopButton("shopFarmer");
 
         addShopButtons(shopPath);
         addShopButtons(shopSprinkler);
@@ -104,7 +104,7 @@ public class GameView extends View {
         GameMenuButton menuBtn = new GameMenuButton(btnName);
         menuBtn.setLayoutX(270 + offsetX * 120);
         menuBtn.setLayoutY(64);
-        super.getMainPane().getChildren().add(menuBtn);
+        super.addToMainPane(menuBtn);
 
         switch (btnName) {
             case "menuBtn" -> menuBtn.setOnMouseClicked(event -> exitGame()); // TODO: implement this method
@@ -118,6 +118,7 @@ public class GameView extends View {
         gridPane.setOnDragOver(this::acceptCopy);
 
         gridPane.setOnDragDropped(event -> {
+            System.out.println("drag dropped");
             if (event.getGestureSource() instanceof ShopButton) {
                 String item = event.getDragboard().getString();
                 Point mousePoint = getPointFromMousePosition(event);
@@ -126,8 +127,9 @@ public class GameView extends View {
 
                 Entity placedEntity = null;
                 if (isEmpty) {
+                    System.out.println("is empty");
                     switch (item) {
-                        case "Path" -> {;
+                        case "Tile" -> {;
                             boolean isAdjacent = isAdjacent(mousePoint);
                             if (isAdjacent) {
                                 placedEntity = new Tile(mousePoint);
@@ -147,7 +149,7 @@ public class GameView extends View {
                     }
                     if (placedEntity != null) {
                         gameGrid.addEntity(placedEntity);
-                        super.getMainPane().getChildren().add(placedEntity.getImgView());
+                        super.addToMainPane(placedEntity.getImgView());
                     }
 
 //                    int cost = placedEntity.getCost();
@@ -167,24 +169,33 @@ public class GameView extends View {
             event.consume();
 
             // TODO: Remove this (debugging)
+            printTileLocations();
         });
+    }
+
+    private void printTileLocations() {
+        System.out.println("Tile locations: ");
+        for (Entity entity : gameGrid.getPlacedTiles()) {
+            System.out.println("\trow: " + entity.getPoint().getX() + " col: " + entity.getPoint().getY());
+        }
     }
 
     private void addFirstTileToMainPane() {
         ImageView firstTile = gameGrid.getPlacedTiles().get(0).getImgView();
-        super.getMainPane().getChildren().add(firstTile);
+        super.addToMainPane(firstTile);
     }
 
     private boolean isGridEmpty(Point point) {
         int row = point.getX();
         int col = point.getY();
-        for (Node node : gridPane.getChildren()) {
-            Integer rowIndex = GridPane.getRowIndex(node);
-            Integer colIndex = GridPane.getColumnIndex(node);
-            if (rowIndex != null && colIndex != null) {
-                if (rowIndex == row && colIndex == col) {
-                    return false;
-                }
+        for (Entity entity : gameGrid.getPlacedTiles()) {
+            if (entity.getX() == row && entity.getY() == col) {
+                return false;
+            }
+        }
+        for (Entity entity : gameGrid.getPlacedTowers()) {
+            if (entity.getX() == row && entity.getY() == col) {
+                return false;
             }
         }
         return true;
@@ -211,6 +222,7 @@ public class GameView extends View {
             e.acceptTransferModes(TransferMode.COPY);
         }
         e.consume();
+        System.out.println("drag over");
     }
 
     private Point getPointFromMousePosition(DragEvent e) {
@@ -223,8 +235,8 @@ public class GameView extends View {
         int y = (int) (mouseY - (mouseY % 64));
 
         // get the row and column of the grid
-        int row = y/64 - 3;
-        int col = x/64;
+        int row = y/64 - 4;
+        int col = x/64 - 1;
 
         return new Point(row, col);
     }

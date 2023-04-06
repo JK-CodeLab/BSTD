@@ -50,7 +50,7 @@ public class GameGrid {
     }
 
     private void setFirstTile() {
-        Tile firstTile = new Tile(new Point(0, 2));
+        Tile firstTile = new Tile(new Point(0, 1));
         placedTiles.add(firstTile);
     }
 

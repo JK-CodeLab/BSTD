@@ -16,20 +16,17 @@ import javafx.scene.input.TransferMode;
 public class ShopButton extends Button {
     private static final String STYLE = "-fx-background-color: transparent;";
     private final String imgName;
-    private String itemName = null;
-    private boolean isItem;
+    private final String itemName;
+
     private Image shopBtnImg;
     private Image itemImg;
 
-    public ShopButton(String imgName, boolean isItem) {
+    public ShopButton(String imgName) {
         this.imgName = imgName;
-        this.isItem = isItem;
-        if (isItem) {
-            this.itemName = imgName;
-        } else {
-            this.itemName = imgName.substring(4);
-            initializeButtonListeners(this);
-        }
+
+        this.itemName = imgName.substring(4);
+        initializeButtonListeners(this);
+
         setImagePath();
         setGraphic(new ImageView(shopBtnImg));
         setStyle(STYLE);
@@ -53,7 +50,7 @@ public class ShopButton extends Button {
             double offsetX = 32;
             double offsetY = 32;
 
-            if (itemName.equals("Path") || itemName.equals("Sprinkler")) {
+            if (itemName.equals("Tile") || itemName.equals("Sprinkler")) {
                 iv.setFitHeight(64);
             } else {
                 iv.setFitHeight(128);

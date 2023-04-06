@@ -11,28 +11,28 @@ public class Sprinkler extends Tower {
     public static final int RANGE = 3;
     public static final int COST = 10;
 
-    private final Image img;
-    private final ImageView imgView;
+//    private final Image img;
+//    private final ImageView imgView;
 
     //TODO: change the point
     public Sprinkler(Point point) {
         super(point, ATTACK, ATTACK_SPEED, RANGE, COST);
-        img = new Image(Objects.requireNonNull(getClass()
-                .getResource("/images/gameScreen/Sprinkler.png")).toExternalForm());
-        imgView = new ImageView(img);
+//        img = new Image(Objects.requireNonNull(getClass()
+//                .getResource("/images/gameScreen/Sprinkler.png")).toExternalForm());
+//        imgView = new ImageView(img);
     }
 
-    public ImageView getImgView() {
-        int row = super.getX();
-        int col = super.getY();
-
-        int x = col * 64;
-        int y = (row + 3) * 64;
-
-        imgView.setLayoutX(x);
-        imgView.setLayoutY(y);
-        return imgView;
-    }
+//    public ImageView getImgView() {
+//        int row = super.getX();
+//        int col = super.getY();
+//
+//        int x = (col + 1) * 64;
+//        int y = (row + 4) * 64;
+//
+//        imgView.setLayoutX(x);
+//        imgView.setLayoutY(y);
+//        return imgView;
+//    }
 
     public int getCost() {
         return COST;

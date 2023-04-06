@@ -1,6 +1,7 @@
 package com.jk.bstd.ui;
 
 import javafx.scene.ImageCursor;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
@@ -43,6 +44,10 @@ public class View {
 
     public Scene getMainScene() {
         return mainScene;
+    }
+
+    public void addToMainPane(Node node) {
+        mainPane.getChildren().add(node);
     }
 
     public void createBackground(String imgPath) {
