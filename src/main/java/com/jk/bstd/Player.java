@@ -23,7 +23,7 @@ public class Player {
 
     public Player() {
         this.money = 200;
-        this.health = 100;
+        this.health = 10;
         this.level = 0;
         this.isAlive = true;
         this.isSelling = false;
@@ -54,6 +54,9 @@ public class Player {
 
     public void takeDamage(int damage) {
         this.health -= damage;
+        if (this.health <= 0) {
+            this.isAlive = false;
+        }
         updateStats();
     }
 
@@ -105,5 +108,6 @@ public class Player {
         this.health = 100;
         this.isAlive = true;
         this.isSelling = false;
+        updateStats();
     }
 }

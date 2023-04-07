@@ -136,12 +136,8 @@ public class GameView extends View {
                 boolean tilesConnected = GameLogic.checkIfTilesAreConnected(gameGrid.getPlacedTiles());
                 boolean lastTileCorrect = GameLogic.checkLastTilePosition(gameGrid.getPlacedTiles(), 12, 0);
 
-                if (tilesConnected && lastTileCorrect) {
-                    if (player.getHealth() >= 0) {
-                        player.setLevel(player.getLevel() + 1);
-                    } else {
-                        player.resetLevel();
-                    }
+                if (tilesConnected && lastTileCorrect && player.isAlive()) {
+                    player.setLevel(player.getLevel() + 1);
                     GameLogic.play(player, gameGrid, gridPane, super.getMainPane());
                 } else {
                     System.out.println("Tiles are no good");

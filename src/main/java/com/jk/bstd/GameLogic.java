@@ -35,7 +35,7 @@ public final class GameLogic {
     public static void play(Player player, GameGrid gameGrid, GridPane gridPane, AnchorPane pane) {
         int numEnemies;
         if (player.getLevel() == 1) {
-            numEnemies = 15;
+            numEnemies = 5;
         } else if (player.getLevel() == 2) {
             numEnemies = 25;
         } else if (player.getLevel() == 3) {
@@ -72,23 +72,42 @@ public final class GameLogic {
 
     private static void spawnEnemies(Path path, int numEnemies, AnchorPane pane, ArrayList<Tower> towers, Player player) {
         double speed = 1.5 / player.getLevel();
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(speed), event -> {
-             // TODO: change this to a random animal
+        Timeline timeline = new Timeline();
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(speed), event -> {
             Chicken chicken = new Chicken();
-            spawnEnemy(pane, path, chicken, towers, player);
-        }));
+            if (player.isAlive()) {
+                spawnEnemy(pane, path, chicken, towers, player);
+            } else {
+                System.out.println("Game Over");
+                timeline.stop();
+            }
+        });
 
+//        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(speed), event -> {
+//             // TODO: change this to a random animal
+//            Chicken chicken = new Chicken();
+//            spawnEnemy(pane, path, chicken, towers, player);
+//        }));
+
+        timeline.getKeyFrames().add(keyFrame);
         timeline.setCycleCount(numEnemies);
         timeline.play();
-
+        timeline.statusProperty().addListener(new ChangeListener<Animation.Status>() {
+            @Override
+            public void changed(ObservableValue<? extends Animation.Status> observableValue, Animation.Status status, Animation.Status t1) {
+                if (t1 == Animation.Status.STOPPED) {
+                    System.out.println("stopped spawning enemies");
+                }
+            }
+        });
         timeline.setOnFinished(event -> {
-            player.setAlive(player.getHealth() > 0);
+            System.out.println("done spawning enemies");
         });
     }
 
     private static void spawnEnemy(AnchorPane pane, Path path, Animal animal, ArrayList<Tower> towers, Player player) {
-        PathTransition pt = new PathTransition(Duration.seconds(path.getElements().size()),path);
-//        PathTransition pt = new PathTransition(Duration.seconds(5), path); // TODO: remove (for faster testing)
+//        PathTransition pt = new PathTransition(Duration.seconds(path.getElements().size()),path);
+        PathTransition pt = new PathTransition(Duration.seconds(5), path); // TODO: remove (for faster testing)
 
         ImageView imgView = animal.getImgView();
         pt.setNode(imgView);
@@ -118,17 +137,25 @@ public final class GameLogic {
                     }
                 }
             }
+
+            if (!player.isAlive()) {
+                pt.stop();
+                System.out.println("stopping pt");
+            }
         });
         pt.statusProperty().addListener(new ChangeListener<Animation.Status>() {
             @Override
             public void changed(ObservableValue<? extends Animation.Status> observableValue, Animation.Status status, Animation.Status t1) {
-                if (t1 == Animation.Status.STOPPED && !animal.getIsDead()) {
+                if (t1 == Animation.Status.STOPPED && !animal.getIsDead() && player.isAlive()) {
                     pane.getChildren().remove(imgView);
                     player.takeDamage(animal.getAttack());
                 }
             }
         });
         pt.play();
+        pt.setOnFinished(event -> {
+            System.out.println("enemy reached end");
+        });
     }
 
     private static Point convertToGridPaneXandY(Point point, GridPane gridPane) {
@@ -143,8 +170,6 @@ public final class GameLogic {
 
         return new Point(newX, newY);
     }
-
-
 
 
     public static void sellEntity(Entity entity, Player player) {
