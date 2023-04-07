@@ -35,7 +35,7 @@ public final class GameLogic {
     public static void play(Player player, GameGrid gameGrid, GridPane gridPane, AnchorPane pane) {
         int numEnemies;
         if (player.getLevel() == 1) {
-            numEnemies = 5;
+            numEnemies = 15;
         } else if (player.getLevel() == 2) {
             numEnemies = 25;
         } else if (player.getLevel() == 3) {
