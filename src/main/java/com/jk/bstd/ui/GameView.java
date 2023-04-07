@@ -35,6 +35,8 @@ import java.util.Objects;
 import com.jk.bstd.GameLogic;
 import javafx.util.Duration;
 
+import static com.jk.bstd.SaveGame.*;
+
 
 public class GameView extends View {
 
@@ -130,7 +132,10 @@ public class GameView extends View {
         super.addToMainPane(menuBtn);
 
         switch (btnName) {
-            case "menuBtn" -> menuBtn.setOnMouseClicked(event -> exitGame()); // TODO: implement this method
+            case "menuBtn" -> menuBtn.setOnMouseClicked(event -> {
+                System.out.println("Menu button clicked");
+                saveGame(player, gameGrid.getPlacedTowers(), gameGrid.getPlacedTiles());
+            });
             case "playBtn" -> menuBtn.setOnMouseClicked(event -> {
                 System.out.println("Play button clicked");
                 int numTiles = gameGrid.getNumTiles();

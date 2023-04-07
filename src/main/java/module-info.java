@@ -1,6 +1,8 @@
 module com.jk.bstd {
     requires javafx.controls;
     requires javafx.fxml;
+    requires org.json;
+    requires json.simple;
 
 
     opens com.jk.bstd to javafx.fxml;
