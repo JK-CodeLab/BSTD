@@ -2,15 +2,16 @@ package com.jk.bstd;
 
 import com.jk.bstd.entities.*;
 import com.jk.bstd.ui.GameGrid;
+import com.jk.bstd.ui.MainMenuView;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -20,10 +21,17 @@ import javafx.scene.shape.Path;
 //TODO: remove, just for test
 import javafx.animation.*;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import javafx.util.Duration;
 //import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
+
+import static com.jk.bstd.SaveGame.saveGame;
 
 public final class GameLogic {
     private static final int GRID_SIZE = 64;
@@ -46,6 +54,7 @@ public final class GameLogic {
 
         Path path = createPath(gameGrid.getPlacedTiles(), gridPane);
         spawnEnemies(path, numEnemies, pane, gameGrid.getPlacedTowers(), player);
+        player.setPlaying(true);
     }
 
     public static Path createPath(ArrayList<Tile> tiles, GridPane gridPane) {
@@ -80,14 +89,11 @@ public final class GameLogic {
             } else {
                 System.out.println("Game Over");
                 timeline.stop();
+
+                MainMenuView mainMenuView = new MainMenuView();
+                createGameOverPopup(mainMenuView.getMainStage(), pane.getScene().getWindow());
             }
         });
-
-//        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(speed), event -> {
-//             // TODO: change this to a random animal
-//            Chicken chicken = new Chicken();
-//            spawnEnemy(pane, path, chicken, towers, player);
-//        }));
 
         timeline.getKeyFrames().add(keyFrame);
         timeline.setCycleCount(numEnemies);
@@ -96,12 +102,12 @@ public final class GameLogic {
             @Override
             public void changed(ObservableValue<? extends Animation.Status> observableValue, Animation.Status status, Animation.Status t1) {
                 if (t1 == Animation.Status.STOPPED) {
-                    System.out.println("stopped spawning enemies");
+                    player.setPlaying(false);
                 }
             }
         });
         timeline.setOnFinished(event -> {
-            System.out.println("done spawning enemies");
+            player.setPlaying(false);
         });
     }
 
@@ -121,7 +127,6 @@ public final class GameLogic {
 
         pt.currentTimeProperty().addListener((observableValue, duration, t1) -> {
             Point2D enemyLocation = new Point2D(imgView.getTranslateX() + 32, imgView.getTranslateY() + 32);
-
             for (Tower tower : towers) {
                 int towerX = tower.getPoint().getRealX() + 32;
                 int towerY = tower.getPoint().getRealY() + 32;
@@ -153,9 +158,9 @@ public final class GameLogic {
             }
         });
         pt.play();
-        pt.setOnFinished(event -> {
-            System.out.println("enemy reached end");
-        });
+//        pt.setOnFinished(event -> {
+//            System.out.println("enemy reached end");
+//        });
     }
 
     private static Point convertToGridPaneXandY(Point point, GridPane gridPane) {
@@ -238,5 +243,47 @@ public final class GameLogic {
         fadeOut.play();
 
         return label;
+    }
+
+    public static void createGameOverPopup(Stage mainStage, Window gameWindow) {
+        Stage popupWindow = new Stage();
+
+        popupWindow.initModality(Modality.APPLICATION_MODAL);
+        popupWindow.setAlwaysOnTop(true);
+        popupWindow.setResizable(false);
+        popupWindow.initStyle(StageStyle.TRANSPARENT);
+
+        Button returnBtn = new Button("return to main menu");
+        Button quitBtn = new Button("exit game");
+
+        returnBtn.setTranslateX(50);
+        returnBtn.setTranslateY(10);
+        quitBtn.setTranslateX(50);
+        quitBtn.setTranslateY(15);
+
+        returnBtn.setOnAction(e -> {
+            popupWindow.close();
+            gameWindow.hide();
+            mainStage.show();
+
+        });
+        quitBtn.setOnAction(e -> {
+            popupWindow.close();
+            System.exit(0);
+        });
+
+        Image bgImg = new Image(Objects.requireNonNull(GameLogic.class.getResourceAsStream("/images/gameScreen/ShopDog.png")));
+        BackgroundImage bg = new BackgroundImage(
+                bgImg, null, null, null, null);
+
+        VBox layout = new VBox(10);
+        layout.setBackground(new Background(bg));
+        layout.getChildren().addAll(returnBtn, quitBtn);
+
+        Scene scene = new Scene(layout, 224, 116);
+        scene.setFill(Color.TRANSPARENT);
+
+        popupWindow.setScene(scene);
+        popupWindow.show();
     }
 }

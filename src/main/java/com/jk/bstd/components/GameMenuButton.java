@@ -11,7 +11,6 @@ public class GameMenuButton extends Button {
     private final String imgName;
     private Image btnImg;
     private Image btnPressedImg;
-    private boolean selling = false;
 
     public GameMenuButton(String imgName) {
         this.imgName = imgName;
@@ -23,47 +22,31 @@ public class GameMenuButton extends Button {
         initializeButtonListeners();
     }
 
-    public boolean isSelling() {
-        return selling;
-    }
-
     private void setImagePath() {
         btnImg = new Image(getClass().getResource("/images/gameButtons/" + imgName + ".png").toExternalForm());
         btnPressedImg = new Image(getClass().getResource("/images/gameButtons/" + imgName + "Pressed.png").toExternalForm());
     }
 
-    private void setButtonPressedStyle() {
+    public void setButtonPressedStyle() {
         setGraphic(new ImageView(btnPressedImg));
         setStyle(STYLE);
         setLayoutY(getLayoutY() + 8);
     }
 
-    private void setIdleButtonStyle() {
+    public void setIdleButtonStyle() {
         setGraphic(new ImageView(btnImg));
         setStyle(STYLE);
         setLayoutY(getLayoutY() - 8);
     }
 
     private void initializeButtonListeners() {
-        if (imgName.equals("sellBtn")) {
-            setOnMousePressed(event -> {
-                if (selling) {
-                    setIdleButtonStyle();
-                    selling = false;
-                } else {
-                    setButtonPressedStyle();
-                    selling = true;
-                }
-            });
-        } else {
-            setOnMousePressed(event -> {
-                setButtonPressedStyle();
-            });
+        setOnMousePressed(event -> {
+            setButtonPressedStyle();
+        });
 
-            setOnMouseReleased(event -> {
-                setIdleButtonStyle();
-            });
-        }
+        setOnMouseReleased(event -> {
+            setIdleButtonStyle();
+        });
 
         setOnMouseEntered(event -> {
             setEffect(new DropShadow());
@@ -73,9 +56,4 @@ public class GameMenuButton extends Button {
             setEffect(null);
         });
     }
-
-//    public void sell(Player player) {
-//        player.setSelling(selling);
-//    }
-
 }

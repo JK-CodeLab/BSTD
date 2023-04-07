@@ -18,6 +18,7 @@ public class Player {
     private int level;
     private boolean isAlive = true;
     private boolean isSelling = false;
+    private boolean isPlaying = false;
     private List<Tower> towers = new ArrayList<>();
     Label stats;
 
@@ -88,6 +89,15 @@ public class Player {
 
     public void setSelling(boolean selling) {
         isSelling = selling;
+        updateStats();
+    }
+
+    public boolean isPlaying() {
+        return isPlaying;
+    }
+
+    public void setPlaying(boolean playing) {
+        isPlaying = playing;
         updateStats();
     }
 

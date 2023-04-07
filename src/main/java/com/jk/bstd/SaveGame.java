@@ -50,7 +50,7 @@ public final class SaveGame {
     }
 
     @SuppressWarnings("unchecked")
-    public static void saveGame(Player player, ArrayList<Tower> towers, ArrayList<Tile> placedTiles) {
+    public static boolean saveGame(Player player, ArrayList<Tower> towers, ArrayList<Tile> placedTiles) {
         try {
             JSONObject save = new JSONObject();
             save.put("player", savePlayer(player));
@@ -60,11 +60,11 @@ public final class SaveGame {
             file.write(save.toString());
             file.flush();
             file.close();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
-
-
     }
 }
 

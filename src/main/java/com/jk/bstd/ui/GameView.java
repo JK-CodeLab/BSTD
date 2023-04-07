@@ -135,28 +135,48 @@ public class GameView extends View {
         switch (btnName) {
             case "menuBtn" -> menuBtn.setOnMouseClicked(event -> {
                 System.out.println("Menu button clicked");
-                createMenuPopup(player, gameGrid.getPlacedTowers(), gameGrid.getPlacedTiles());
+                createMenuPopup();
             });
             case "playBtn" -> menuBtn.setOnMouseClicked(event -> {
 
                 boolean tilesConnected = GameLogic.checkIfTilesAreConnected(gameGrid.getPlacedTiles());
                 boolean lastTileCorrect = GameLogic.checkLastTilePosition(gameGrid.getPlacedTiles(), 12, 0);
 
-                if (tilesConnected && lastTileCorrect && player.isAlive()) {
+                if (!player.isAlive()) {
+                    Label message = GameLogic.createErrorPopup("You are dead");
+                    super.addToMainPane(message);
+                } else if (!tilesConnected) {
+                    Label message = GameLogic.createErrorPopup("Tiles are not connected");
+                    super.addToMainPane(message);
+                } else if (!lastTileCorrect) {
+                    Label message = GameLogic.createErrorPopup("Last tile must reach the end");
+                    super.addToMainPane(message);
+                } else if (player.isPlaying()) {
+                    Label message = GameLogic.createErrorPopup("You are already playing");
+                    super.addToMainPane(message);
+                } else {
                     player.setLevel(player.getLevel() + 1);
                     GameLogic.play(player, gameGrid, gridPane, super.getMainPane());
-                } else {
-                    Label message = GameLogic.createErrorPopup("Tiles are no good");
-                    super.addToMainPane(message);
                 }
             });
             case "sellBtn" -> menuBtn.setOnMouseClicked(event -> {
-                player.setSelling(menuBtn.isSelling());
+                if (!player.isPlaying()) {
+                    if (player.isSelling()) {
+                        menuBtn.setIdleButtonStyle();
+                        player.setSelling(false);
+                    } else {
+                        menuBtn.setButtonPressedStyle();
+                        player.setSelling(true);
+                    }
+                } else {
+                    Label message = GameLogic.createErrorPopup("cannot sell while playing");
+                    super.addToMainPane(message);
+                }
             });
         }
     }
 
-    private void createMenuPopup(Player player, ArrayList<Tower> towers, ArrayList<Tile> tiles) {
+    private void createMenuPopup() {
         Stage popupWindow = new Stage();
 
         popupWindow.initModality(Modality.APPLICATION_MODAL);
@@ -164,26 +184,43 @@ public class GameView extends View {
         popupWindow.setResizable(false);
         popupWindow.initStyle(StageStyle.TRANSPARENT);
 
-        Button button = new Button("Close");
+        Button close = new Button("close");
         Button saveBtn = new Button("save game");
+        Button returnBtn = new Button("return to main menu");
         Button exitBtn = new Button("exit game");
 
         saveBtn.setTranslateX(50);
         saveBtn.setTranslateY(10);
+        returnBtn.setTranslateX(50);
+        returnBtn.setTranslateY(10);
         exitBtn.setTranslateX(50);
-        exitBtn.setTranslateY(15);
-        button.setTranslateX(160);
-        button.setTranslateY(18);
+        exitBtn.setTranslateY(10);
+        close.setTranslateX(160);
+        close.setTranslateY(10);
 
         saveBtn.setOnAction(e -> {
-            saveGame(player, towers, tiles);
+            boolean saved = saveGame(player, gameGrid.getPlacedTowers(), gameGrid.getPlacedTiles());
             popupWindow.close();
+
+            Label message;
+            if (saved) {
+                message = GameLogic.createErrorPopup("Game saved");
+            } else {
+                message = GameLogic.createErrorPopup("Error saving");
+            }
+            super.addToMainPane(message);
         });
         exitBtn.setOnAction(e -> {
             exitGame();
             popupWindow.close();
         });
-        button.setOnAction(e -> popupWindow.close());
+        returnBtn.setOnAction(e -> {
+            popupWindow.close();
+            gameStage.hide();
+            MainMenuView mainMenu = new MainMenuView();
+            mainMenu.getMainStage().show();
+        });
+        close.setOnAction(e -> popupWindow.close());
 
         Image bgImg = new Image(Objects.requireNonNull(
                 getClass().getResource("/images/gameScreen/ShopDog.png")).toExternalForm());
@@ -192,9 +229,9 @@ public class GameView extends View {
 
         VBox layout = new VBox(10);
         layout.setBackground(new Background(bg));
-        layout.getChildren().addAll(saveBtn, exitBtn, button);
+        layout.getChildren().addAll(saveBtn, returnBtn, exitBtn, close);
 
-        Scene scene = new Scene(layout, 224, 116);
+        Scene scene = new Scene(layout, 224, 150);
         scene.setFill(Color.TRANSPARENT);
 
         popupWindow.setScene(scene);
