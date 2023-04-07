@@ -35,14 +35,17 @@ public class Player {
 
     public void setMoney(int money) {
         this.money = money;
+        updateStats();
     }
 
     public void addMoney(int money) {
         this.money += money;
+        updateStats();
     }
 
     public void removeMoney(int money) {
         this.money -= money;
+        updateStats();
     }
 
     public int getHealth() {
@@ -51,6 +54,7 @@ public class Player {
 
     public void takeDamage(int damage) {
         this.health -= damage;
+        updateStats();
     }
 
     public int getLevel() {
@@ -59,6 +63,7 @@ public class Player {
 
     public void setLevel(int level) {
         this.level = level;
+        updateStats();
     }
 
     public boolean isAlive() {
@@ -67,6 +72,7 @@ public class Player {
 
     public void setAlive(boolean alive) {
         isAlive = alive;
+        updateStats();
     }
 
     public boolean isSelling() {
@@ -75,6 +81,7 @@ public class Player {
 
     public void setSelling(boolean selling) {
         isSelling = selling;
+        updateStats();
     }
 
     public Label getStats() {

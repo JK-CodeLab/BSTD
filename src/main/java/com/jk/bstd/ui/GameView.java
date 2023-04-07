@@ -132,23 +132,24 @@ public class GameView extends View {
         switch (btnName) {
             case "menuBtn" -> menuBtn.setOnMouseClicked(event -> exitGame()); // TODO: implement this method
             case "playBtn" -> menuBtn.setOnMouseClicked(event -> {
-                System.out.println("Play button clicked");
-                int numTiles = gameGrid.getNumTiles();
-                Point lastTilePoint = gameGrid.getPlacedTiles().get(numTiles - 1).getPoint();
-                if (lastTilePoint.getX() == 12 && lastTilePoint.getY() == 0) {
+
+                boolean tilesConnected = GameLogic.checkIfTilesAreConnected(gameGrid.getPlacedTiles());
+                boolean lastTileCorrect = GameLogic.checkLastTilePosition(gameGrid.getPlacedTiles(), 12, 0);
+
+                if (tilesConnected && lastTileCorrect) {
                     if (player.getHealth() >= 0) {
                         player.setLevel(player.getLevel() + 1);
-                        player.updateStats();
                     } else {
                         player.resetLevel();
-                        player.updateStats();
                     }
                     GameLogic.play(player, gameGrid, gridPane, super.getMainPane());
+                } else {
+                    System.out.println("Tiles are no good");
+                    // TODO: Display popup message
                 }
             });
             case "sellBtn" -> menuBtn.setOnMouseClicked(event -> {
                 player.setSelling(menuBtn.isSelling());
-                System.out.println("Selling: " + player.isSelling());
             });
         }
     }
@@ -191,9 +192,14 @@ public class GameView extends View {
                         ImageView entityImgView = placedEntity.getImgView();
 
                         gameGrid.addEntity(placedEntity);
-//                        super.addToMainPane(entityImgView);
 
-                        GameLogic.buyEntity(super.getMainPane(), placedEntity, entityImgView, player);
+                        boolean bought = GameLogic.buyEntity(placedEntity, player);
+                        if (bought) {
+                            super.addToMainPane(entityImgView);
+                        } else {
+                            System.out.println("Not enough money");
+                            // TODO: Display popup message
+                        }
 
                         Entity finalPlacedEntity = placedEntity;
                         entityImgView.setOnMouseClicked(e -> onEntityClicked(e, finalPlacedEntity));
@@ -202,10 +208,9 @@ public class GameView extends View {
             }
             event.setDropCompleted(true);
             event.consume();
-            player.updateStats();
 
             // TODO: Remove this (debugging)
-            printTileLocations();
+//            printTileLocations();
         });
     }
 
@@ -217,8 +222,9 @@ public class GameView extends View {
     }
 
     private void addFirstTileToMainPane() {
-        // TODO: remove, just for testing
+        // TODO: remove & uncomment below (testing)
         for (Entity entity : gameGrid.getPlacedTiles()) {
+            entity.getImgView().setOnMouseClicked(e -> onEntityClicked(e, entity));
             super.addToMainPane(entity.getImgView());
         }
 //        ImageView firstTile = gameGrid.getPlacedTiles().get(0).getImgView();
@@ -271,7 +277,6 @@ public class GameView extends View {
             super.getMainPane().getChildren().remove(entity.getImgView());
 
             GameLogic.sellEntity(entity, player);
-            player.updateStats();
         }
     }
 

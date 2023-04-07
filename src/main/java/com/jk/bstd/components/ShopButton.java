@@ -45,7 +45,6 @@ public class ShopButton extends Button {
             content.putString(itemName);
             db.setContent(content);
 
-
             ImageView iv = new ImageView(itemImg);
             boolean tileOrSprinkler = itemName.equals("Tile") || itemName.equals("Sprinkler");
             double offsetX, offsetY;
