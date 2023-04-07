@@ -24,7 +24,8 @@ import java.util.Objects;
 
 import com.jk.bstd.GameLogic;
 import javafx.stage.StageStyle;
-
+import org.json.simple.JSONObject;
+import static com.jk.bstd.LoadGame.*;
 import static com.jk.bstd.SaveGame.*;
 
 
@@ -40,12 +41,10 @@ public class GameView extends View {
     private final int SHOP_BTN_START_X = 1008;
     private final int SHOP_BTN_START_Y = 66;
 
-    public GameView() {
+    public GameView(boolean loadGame) {
         super();
-        Tower tower = new Scarecrow(new Point(0, 0));
-        player = new Player(); // TODO: get player from main menu, or create new player
         shopButtons = new ArrayList<>();
-        playerStats = player.getStats();
+
         createBackground("gameScreen/gameBg.png");
         createShop();
 
@@ -56,6 +55,19 @@ public class GameView extends View {
         addGridPaneToMainPane();
         initializeGameGrid();
         addFirstTileToMainPane();
+        if (loadGame) {
+            JSONObject saveFile = readSave();
+            if (saveFile != null) {
+                this.player = loadPlayer(saveFile);
+                gameGrid.setPlacedTowers(loadTowers(saveFile));
+                gameGrid.setPlacedTiles(loadTiles(saveFile));
+                drawTiles();
+                drawTowers();
+            }
+        } else {
+            this.player = new Player();
+        }
+        playerStats = player.getStats();
         displayPlayerStats();
     }
 
@@ -327,5 +339,17 @@ public class GameView extends View {
         int pointY = y/64 - 4;
 
         return new Point(pointX, pointY);
+    }
+
+    private void drawTiles() {
+        for (Entity entity : gameGrid.getPlacedTiles()) {
+            super.addToMainPane(entity.getImgView());
+        }
+    }
+
+    private void drawTowers() {
+        for (Entity entity : gameGrid.getPlacedTowers()) {
+            super.addToMainPane(entity.getImgView());
+        }
     }
 }

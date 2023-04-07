@@ -16,8 +16,8 @@ public class Player {
     private int money;
     private int health;
     private int level;
-    private boolean isAlive;
-    private boolean isSelling;
+    private boolean isAlive = true;
+    private boolean isSelling = false;
     private List<Tower> towers = new ArrayList<>();
     Label stats;
 
@@ -25,8 +25,12 @@ public class Player {
         this.money = 200;
         this.health = 10;
         this.level = 0;
-        this.isAlive = true;
-        this.isSelling = false;
+    }
+
+    public Player(int money, int health, int level) {
+        this.money = money;
+        this.health = health;
+        this.level = level;
     }
 
     public int getMoney() {

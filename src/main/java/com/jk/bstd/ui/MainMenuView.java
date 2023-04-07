@@ -1,16 +1,23 @@
 package com.jk.bstd.ui;
 
+import com.jk.bstd.Player;
 import com.jk.bstd.components.MainMenuButton;
 import javafx.scene.ImageCursor;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.Scene;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.stage.Stage;
+import org.json.simple.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.jk.bstd.LoadGame.*;
 
 public class MainMenuView {
 
@@ -66,13 +73,19 @@ public class MainMenuView {
         addButtons(exit);
 
         newGame.setOnAction(event -> {
-            GameView gameView = new GameView();
+            GameView gameView = new GameView(false);
             gameView.createNewGame(mainStage);
         });
 
         loadGame.setOnAction(event -> {
-            GameView gameView = new GameView();
-            gameView.loadGame(mainStage);
+            File f = new File("src/main/resources/save.json");
+            if (f.exists()) {
+                GameView gameView = new GameView(true);
+                gameView.createNewGame(mainStage);
+            } else {
+                // TODO: add popup
+                System.out.println("Does not exist");
+            }
         });
 
         exit.setOnAction(event -> {
