@@ -39,20 +39,19 @@ public final class GameLogic {
     }
 
     public static void play(Player player, GameGrid gameGrid, GridPane gridPane, AnchorPane pane) {
-            int numEnemies;
-            if (player.getLevel() == 1) {
-                numEnemies = 15;
-            } else if (player.getLevel() == 2) {
-                numEnemies = 25;
-            } else if (player.getLevel() == 3) {
-                numEnemies = 35;
-            } else {
-                numEnemies = 50;
-            }
-    //        create path
+        int numEnemies;
+        if (player.getLevel() == 1) {
+            numEnemies = 15;
+        } else if (player.getLevel() == 2) {
+            numEnemies = 25;
+        } else if (player.getLevel() == 3) {
+            numEnemies = 35;
+        } else {
+            numEnemies = 50;
+        }
 
-            Path path = createPath(gameGrid.getPlacedTiles(), gridPane);
-            spawnEnemies(path, numEnemies, pane, gameGrid.getPlacedTowers(), player);
+        Path path = createPath(gameGrid.getPlacedTiles(), gridPane);
+        spawnEnemies(path, numEnemies, pane, gameGrid.getPlacedTowers(), player);
     }
 
     public static Path createPath(ArrayList<Tile> tiles, GridPane gridPane) {
@@ -74,21 +73,17 @@ public final class GameLogic {
                 path.getElements().add(line1);
             }
         }
-
-        System.out.println(path.getElements());
         return path;
     }
 
     private static void spawnEnemies(Path path, int numEnemies, AnchorPane pane, ArrayList<Tower> towers, Player player) {
         double speed = 1.5 / player.getLevel();
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(speed), event -> {
-
-             {
-                 // TODO: change this to a random animal
-                Chicken chicken = new Chicken();
-                spawnEnemy(pane, path, chicken, towers, player);
-            }
+             // TODO: change this to a random animal
+            Chicken chicken = new Chicken();
+            spawnEnemy(pane, path, chicken, towers, player);
         }));
+
         timeline.setCycleCount(numEnemies);
         timeline.play();
 
@@ -99,7 +94,7 @@ public final class GameLogic {
 
     private static void spawnEnemy(AnchorPane pane, Path path, Animal animal, ArrayList<Tower> towers, Player player) {
         PathTransition pt = new PathTransition(Duration.seconds(path.getElements().size()),path);
-//        PathTransition pt = new PathTransition(Duration.seconds(5), path);
+//        PathTransition pt = new PathTransition(Duration.seconds(5), path); // TODO: remove (for faster testing)
 
         ImageView imgView = animal.getImgView();
         pt.setNode(imgView);
@@ -126,14 +121,9 @@ public final class GameLogic {
                         pt.stop();
                         pane.getChildren().remove(imgView);
                         player.addMoney(animal.getGoldDropped());
-                        player.updateStats();
                     }
                 }
             }
-//            if (player.getHealth() < 0) {
-//                player.setAlive(false);
-//                System.out.println("Game Over");
-//            }
         });
         pt.statusProperty().addListener(new ChangeListener<Animation.Status>() {
             @Override
@@ -141,12 +131,10 @@ public final class GameLogic {
                 if (t1 == Animation.Status.STOPPED && !animal.getIsDead()) {
                     pane.getChildren().remove(imgView);
                     player.takeDamage(animal.getAttack());
-                    player.updateStats();
                 }
             }
         });
         pt.play();
-        // if player isAlive and animation is over, set player level to next level
     }
 
     private static Point convertToGridPaneXandY(Point point, GridPane gridPane) {
@@ -170,11 +158,43 @@ public final class GameLogic {
         player.addMoney(cost);
     }
 
-    public static void buyEntity(AnchorPane pane, Entity entity, ImageView imgView, Player player) {
+    public static boolean buyEntity(Entity entity, Player player) {
         if (player.getMoney() - entity.getCost() > 0) {
-            pane.getChildren().add(imgView);
             int cost = entity.getCost();
             player.removeMoney(cost);
+            return true;
+        } else {
+            return false;
         }
+    }
+
+    public static boolean checkLastTilePosition(ArrayList<Tile> tiles, int x, int y) {
+        if (tiles.size() == 0) {
+            return false;
+        }
+        Tile lastTile = tiles.get(tiles.size() - 1);
+        return lastTile.getPoint().getX() == x && lastTile.getPoint().getY() == y;
+    }
+
+    public static boolean checkIfTilesAreConnected(ArrayList<Tile> tiles) {
+        if (tiles.size() < 2) {
+            return false;
+        }
+        for (int i = 0; i < tiles.size() - 1; i++) {
+            Tile tile = tiles.get(i);
+            Tile otherTile = tiles.get(i + 1);
+            if (!isConnectedTo(tile, otherTile)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isConnectedTo(Tile tile, Tile otherTile) {
+        int x = tile.getPoint().getX();
+        int y = tile.getPoint().getY();
+        int otherX = otherTile.getPoint().getX();
+        int otherY = otherTile.getPoint().getY();
+        return (x == otherX && (y == otherY + 1 || y == otherY - 1)) || (y == otherY && (x == otherX + 1 || x == otherX - 1));
     }
 }
