@@ -17,6 +17,24 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        if (OSPlatform.isWindows()) {
+            System.out.println("Windows");
+        } else if (OSPlatform.isMac()) {
+            System.out.println("Mac");
+        } else {
+            System.out.println("idk");
+        }
         launch();
+    }
+}
+
+class OSPlatform {
+    private static String OS = System.getProperty("os.name").toLowerCase();
+    public static boolean isWindows() {
+        return (OS.contains("win"));
+    }
+
+    public static boolean isMac() {
+        return (OS.contains("mac"));
     }
 }
