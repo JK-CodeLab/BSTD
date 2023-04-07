@@ -4,36 +4,26 @@ import com.jk.bstd.Player;
 import com.jk.bstd.components.GameMenuButton;
 import com.jk.bstd.components.ShopButton;
 import com.jk.bstd.entities.*;
-import javafx.animation.KeyFrame;
-import javafx.animation.PathTransition;
-import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
-import javafx.application.Platform;
-import javafx.event.Event;
-import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 import com.jk.bstd.GameLogic;
-import javafx.util.Duration;
+import javafx.stage.StageStyle;
 
 import static com.jk.bstd.SaveGame.*;
 
@@ -82,7 +72,6 @@ public class GameView extends View {
     }
 
     public void exitGame() {
-        /// TODO: Implement this method
         gameStage.close();
     }
 
@@ -134,7 +123,7 @@ public class GameView extends View {
         switch (btnName) {
             case "menuBtn" -> menuBtn.setOnMouseClicked(event -> {
                 System.out.println("Menu button clicked");
-                saveGame(player, gameGrid.getPlacedTowers(), gameGrid.getPlacedTiles());
+                createMenuPopup(player, gameGrid.getPlacedTowers(), gameGrid.getPlacedTiles());
             });
             case "playBtn" -> menuBtn.setOnMouseClicked(event -> {
 
@@ -145,14 +134,59 @@ public class GameView extends View {
                     player.setLevel(player.getLevel() + 1);
                     GameLogic.play(player, gameGrid, gridPane, super.getMainPane());
                 } else {
-                    System.out.println("Tiles are no good");
-                    // TODO: Display popup message
+                    Label message = GameLogic.createErrorPopup("Tiles are no good");
+                    super.addToMainPane(message);
                 }
             });
             case "sellBtn" -> menuBtn.setOnMouseClicked(event -> {
                 player.setSelling(menuBtn.isSelling());
             });
         }
+    }
+
+    private void createMenuPopup(Player player, ArrayList<Tower> towers, ArrayList<Tile> tiles) {
+        Stage popupWindow = new Stage();
+
+        popupWindow.initModality(Modality.APPLICATION_MODAL);
+        popupWindow.setAlwaysOnTop(true);
+        popupWindow.setResizable(false);
+        popupWindow.initStyle(StageStyle.TRANSPARENT);
+
+        Button button = new Button("Close");
+        Button saveBtn = new Button("save game");
+        Button exitBtn = new Button("exit game");
+
+        saveBtn.setTranslateX(50);
+        saveBtn.setTranslateY(10);
+        exitBtn.setTranslateX(50);
+        exitBtn.setTranslateY(15);
+        button.setTranslateX(160);
+        button.setTranslateY(18);
+
+        saveBtn.setOnAction(e -> {
+            saveGame(player, towers, tiles);
+            popupWindow.close();
+        });
+        exitBtn.setOnAction(e -> {
+            exitGame();
+            popupWindow.close();
+        });
+        button.setOnAction(e -> popupWindow.close());
+
+        Image bgImg = new Image(Objects.requireNonNull(
+                getClass().getResource("/images/gameScreen/ShopDog.png")).toExternalForm());
+        BackgroundImage bg = new BackgroundImage(
+                bgImg, null, null, null, null);
+
+        VBox layout = new VBox(10);
+        layout.setBackground(new Background(bg));
+        layout.getChildren().addAll(saveBtn, exitBtn, button);
+
+        Scene scene = new Scene(layout, 224, 116);
+        scene.setFill(Color.TRANSPARENT);
+
+        popupWindow.setScene(scene);
+        popupWindow.showAndWait();
     }
 
     private void initializeGameGrid() {
@@ -176,11 +210,9 @@ public class GameView extends View {
                         }
                         case "Sprinkler" -> {
                             placedEntity = new Sprinkler(mousePoint);
-
                         }
                         case "Scarecrow" -> {
                             placedEntity = new Scarecrow(mousePoint);
-
                         }
                         case "Farmer" -> {
                             placedEntity = new Farmer(mousePoint);
@@ -198,8 +230,8 @@ public class GameView extends View {
                         if (bought) {
                             super.addToMainPane(entityImgView);
                         } else {
-                            System.out.println("Not enough money");
-                            // TODO: Display popup message
+                            Label message = GameLogic.createErrorPopup("Not enough money");
+                            super.addToMainPane(message);
                         }
 
                         Entity finalPlacedEntity = placedEntity;

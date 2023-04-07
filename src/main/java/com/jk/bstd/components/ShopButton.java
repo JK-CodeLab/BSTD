@@ -49,14 +49,12 @@ public class ShopButton extends Button {
             boolean tileOrSprinkler = itemName.equals("Tile") || itemName.equals("Sprinkler");
             double offsetX, offsetY;
             if (OSPlatform.isWindows()) {
-                System.out.println("Windows");
                 offsetX = 32;
                 offsetY = 32;
                 if (!tileOrSprinkler) {
                     offsetY *= 3;
                 }
             } else {
-                System.out.println("Mac");
                 offsetX = 0;
                 offsetY = 0;
                 if (!tileOrSprinkler) {

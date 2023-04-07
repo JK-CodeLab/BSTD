@@ -5,10 +5,11 @@ import com.jk.bstd.ui.GameGrid;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
-import javafx.scene.Group;
-import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
@@ -17,18 +18,11 @@ import javafx.scene.shape.Path;
 
 
 //TODO: remove, just for test
-import javafx.scene.shape.*;
 import javafx.animation.*;
-import javafx.stage.Stage;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 //import org.json.JSONObject;
-import java.io.FileWriter;
-import java.io.IOException;
 
-import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public final class GameLogic {
@@ -184,7 +178,7 @@ public final class GameLogic {
     }
 
     public static boolean buyEntity(Entity entity, Player player) {
-        if (player.getMoney() - entity.getCost() > 0) {
+        if (player.getMoney() - entity.getCost() >= 0) {
             int cost = entity.getCost();
             player.removeMoney(cost);
             return true;
@@ -221,5 +215,28 @@ public final class GameLogic {
         int otherX = otherTile.getPoint().getX();
         int otherY = otherTile.getPoint().getY();
         return (x == otherX && (y == otherY + 1 || y == otherY - 1)) || (y == otherY && (x == otherX + 1 || x == otherX - 1));
+    }
+
+    public static Label createErrorPopup(String text) {
+        Label label = new Label(text);
+        label.setFont(new Font("Comic Sans MS", 20));
+        label.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+        label.setLayoutX(590);
+        label.setLayoutY(730);
+        label.setPrefWidth(200);
+        label.setPrefHeight(80);
+
+        FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), label);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+        fadeIn.play();
+
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(2), label);
+        fadeOut.setFromValue(1);
+        fadeOut.setToValue(0);
+        fadeOut.setDelay(Duration.seconds(4)); // Add a delay of 4 seconds before starting the fade-out
+        fadeOut.play();
+
+        return label;
     }
 }

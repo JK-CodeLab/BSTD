@@ -90,7 +90,7 @@ public class Player {
     public Label getStats() {
         stats = new Label();
         stats.setText("Money: " + this.money + "\nHealth: " + this.health + "\nLevel: " + this.level);
-        stats.setFont(Font.font("Comic Sans", FontWeight.BOLD, 25));
+        stats.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 25));
         stats.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
         stats.setLayoutX(630);
         stats.setLayoutY(30);
