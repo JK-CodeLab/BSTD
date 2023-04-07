@@ -86,8 +86,16 @@ public class GameGrid {
         return placedTowers;
     }
 
+    public void setPlacedTowers(ArrayList<Tower> placedTowers) {
+        this.placedTowers = placedTowers;
+    }
+
     public ArrayList<Tile> getPlacedTiles() {
         return placedTiles;
+    }
+
+    public void setPlacedTiles(ArrayList<Tile> placedTiles) {
+        this.placedTiles = placedTiles;
     }
 
     public GridPane getGridPane() {

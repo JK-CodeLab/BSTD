@@ -2,12 +2,11 @@ package com.jk.bstd;
 
 import com.jk.bstd.entities.*;
 import com.jk.bstd.ui.GameGrid;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public final class SaveGame {
@@ -28,6 +27,8 @@ public final class SaveGame {
         }
         return towerArray;
     }
+
+    @SuppressWarnings("unchecked")
     private static JSONObject savePlayer(Player player) {
         JSONObject save = new JSONObject();
         save.put("level", player.getLevel());
@@ -48,6 +49,7 @@ public final class SaveGame {
         return pathArray;
     }
 
+    @SuppressWarnings("unchecked")
     public static void saveGame(Player player, ArrayList<Tower> towers, ArrayList<Tile> placedTiles) {
         try {
             JSONObject save = new JSONObject();
