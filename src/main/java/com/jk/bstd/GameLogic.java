@@ -5,10 +5,13 @@ import com.jk.bstd.ui.GameGrid;
 import com.jk.bstd.ui.MainMenuView;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -41,16 +44,7 @@ public final class GameLogic {
     }
 
     public static void play(Player player, GameGrid gameGrid, GridPane gridPane, AnchorPane pane) {
-        int numEnemies;
-        if (player.getLevel() == 1) {
-            numEnemies = 15;
-        } else if (player.getLevel() == 2) {
-            numEnemies = 25;
-        } else if (player.getLevel() == 3) {
-            numEnemies = 35;
-        } else {
-            numEnemies = 50;
-        }
+        int numEnemies = player.getLevel() * 15;
 
         Path path = createPath(gameGrid.getPlacedTiles(), gridPane);
         spawnEnemies(path, numEnemies, pane, gameGrid.getPlacedTowers(), player);
@@ -112,8 +106,8 @@ public final class GameLogic {
     }
 
     private static void spawnEnemy(AnchorPane pane, Path path, Animal animal, ArrayList<Tower> towers, Player player) {
-//        PathTransition pt = new PathTransition(Duration.seconds(path.getElements().size()),path);
-        PathTransition pt = new PathTransition(Duration.seconds(5), path); // TODO: remove (for faster testing)
+        PathTransition pt = new PathTransition(Duration.seconds(path.getElements().size()),path);
+//        PathTransition pt = new PathTransition(Duration.seconds(2), path); // TODO: remove (for faster testing)
 
         ImageView imgView = animal.getImgView();
         pt.setNode(imgView);
@@ -145,7 +139,6 @@ public final class GameLogic {
 
             if (!player.isAlive()) {
                 pt.stop();
-                System.out.println("stopping pt");
             }
         });
         pt.statusProperty().addListener(new ChangeListener<Animation.Status>() {
@@ -158,9 +151,6 @@ public final class GameLogic {
             }
         });
         pt.play();
-//        pt.setOnFinished(event -> {
-//            System.out.println("enemy reached end");
-//        });
     }
 
     private static Point convertToGridPaneXandY(Point point, GridPane gridPane) {
@@ -223,13 +213,21 @@ public final class GameLogic {
     }
 
     public static Label createErrorPopup(String text) {
+        Image img = new Image(Objects.requireNonNull(GameLogic.class.getResource("/images/gameButtons/errorPopupBg.png")).toExternalForm());
+        BackgroundImage backgroundImage = new BackgroundImage(img, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+
         Label label = new Label(text);
-        label.setFont(new Font("Comic Sans MS", 20));
-        label.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
-        label.setLayoutX(590);
+        label.setFont(new Font("Munro", 20));
+        label.setBackground(new Background(backgroundImage));
+
+        label.setLayoutX(480);
         label.setLayoutY(730);
-        label.setPrefWidth(200);
-        label.setPrefHeight(80);
+        label.setPrefWidth(320);
+        label.setPrefHeight(88);
+
+        label.setPadding(new Insets(10, 10, 10, 90));
+        label.setWrapText(true);
+        label.setAlignment(Pos.CENTER_LEFT);
 
         FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), label);
         fadeIn.setFromValue(0);
@@ -245,6 +243,33 @@ public final class GameLogic {
         return label;
     }
 
+    public static Button getButton(String btnName) {
+        Image btnBg;
+        Button btn;
+        if (btnName.equals("close")) {
+            btnBg = new Image(Objects.requireNonNull(GameLogic.class.getResource("/images/gameButtons/closeBtn.png")).toExternalForm());
+            btn = new Button();
+            btn.setPrefSize(50, 50);
+            btn.setTranslateX(135);
+            btn.setTranslateY(15);
+        } else {
+            btnBg = new Image(Objects.requireNonNull(GameLogic.class.getResource("/images/gameButtons/btnBg.png")).toExternalForm());
+            btn = new Button(btnName);
+            btn.setPrefSize(163, 50);
+        }
+        BackgroundImage backgroundImage = new BackgroundImage(btnBg, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+        Background background = new Background(backgroundImage);
+
+        btn.setBackground(background);
+        btn.setAlignment(Pos.TOP_CENTER);
+        btn.setFont(Font.font("Munro", 25));
+
+        btn.setOnMouseEntered(event -> btn.setEffect(new DropShadow()));
+        btn.setOnMouseExited(event -> btn.setEffect(null));
+
+        return btn;
+    }
+
     public static void createGameOverPopup(Stage mainStage, Window gameWindow) {
         Stage popupWindow = new Stage();
 
@@ -253,13 +278,8 @@ public final class GameLogic {
         popupWindow.setResizable(false);
         popupWindow.initStyle(StageStyle.TRANSPARENT);
 
-        Button returnBtn = new Button("return to main menu");
-        Button quitBtn = new Button("exit game");
-
-        returnBtn.setTranslateX(50);
-        returnBtn.setTranslateY(10);
-        quitBtn.setTranslateX(50);
-        quitBtn.setTranslateY(15);
+        Button returnBtn = getButton("back home");
+        Button quitBtn = getButton("quit game");
 
         returnBtn.setOnAction(e -> {
             popupWindow.close();
@@ -272,15 +292,16 @@ public final class GameLogic {
             System.exit(0);
         });
 
-        Image bgImg = new Image(Objects.requireNonNull(GameLogic.class.getResourceAsStream("/images/gameScreen/ShopDog.png")));
+        Image bgImg = new Image(Objects.requireNonNull(GameLogic.class.getResourceAsStream("/images/gameButtons/gameOverPopupBg.png")));
         BackgroundImage bg = new BackgroundImage(
                 bgImg, null, null, null, null);
 
-        VBox layout = new VBox(10);
+        VBox layout = new VBox(13);
         layout.setBackground(new Background(bg));
         layout.getChildren().addAll(returnBtn, quitBtn);
+        layout.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(layout, 224, 116);
+        Scene scene = new Scene(layout, 320, 256);
         scene.setFill(Color.TRANSPARENT);
 
         popupWindow.setScene(scene);

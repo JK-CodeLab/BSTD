@@ -3,14 +3,19 @@ package com.jk.bstd;
 import com.jk.bstd.entities.Tower;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BackgroundImage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Player {
     private int money;
@@ -21,10 +26,13 @@ public class Player {
     private boolean isPlaying = false;
     private List<Tower> towers = new ArrayList<>();
     Label stats;
+    private Label moneyLabel = new Label();
+    private Label healthLabel = new Label();
+    private Label levelLabel = new Label();
 
     public Player() {
         this.money = 200;
-        this.health = 10;
+        this.health = 100;
         this.level = 0;
     }
 
@@ -101,27 +109,41 @@ public class Player {
         updateStats();
     }
 
-    public Label getStats() {
-        stats = new Label();
-        stats.setText("Money: " + this.money + "\nHealth: " + this.health + "\nLevel: " + this.level);
-        stats.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 25));
-        stats.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
-        stats.setLayoutX(630);
-        stats.setLayoutY(30);
-        return stats;
+    public Label createStatsLabel(String labelName) {
+        switch (labelName) {
+            case "money" -> {
+                moneyLabel.setText(String.valueOf(this.money));
+                moneyLabel.setLayoutX(388);
+                moneyLabel.setLayoutY(40);
+                moneyLabel.setFont(Font.font("Munro", FontWeight.BOLD, 35));
+                moneyLabel.setTextFill(Color.WHITE);
+                return moneyLabel;
+            }
+            case "health" -> {
+                healthLabel.setText(String.valueOf(this.health));
+                healthLabel.setLayoutX(530);
+                healthLabel.setLayoutY(40);
+                healthLabel.setFont(Font.font("Munro", FontWeight.BOLD, 35));
+                healthLabel.setTextFill(Color.WHITE);
+                return healthLabel;
+            }
+            case "level" -> {
+                levelLabel.setText(String.valueOf(this.level));
+                levelLabel.setLayoutX(687);
+                levelLabel.setLayoutY(40);
+                levelLabel.setFont(Font.font("Munro", FontWeight.BOLD, 35));
+                levelLabel.setTextFill(Color.WHITE);
+                return levelLabel;
+            }
+        }
+        return null;
     }
 
     public void updateStats() {
         Platform.runLater(() -> {
-            stats.setText("Money: " + this.money + "\nHealth: " + this.health + "\nLevel: " + this.level);
+            moneyLabel.setText(String.valueOf(this.money));
+            healthLabel.setText(String.valueOf(this.health));
+            levelLabel.setText(String.valueOf(this.level));
         });
-    }
-
-    public void resetLevel() {
-        this.money = 200;
-        this.health = 100;
-        this.isAlive = true;
-        this.isSelling = false;
-        updateStats();
     }
 }

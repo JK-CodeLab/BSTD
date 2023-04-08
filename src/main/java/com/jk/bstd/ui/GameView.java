@@ -4,9 +4,12 @@ import com.jk.bstd.Player;
 import com.jk.bstd.components.GameMenuButton;
 import com.jk.bstd.components.ShopButton;
 import com.jk.bstd.entities.*;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
@@ -14,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -36,10 +40,12 @@ public class GameView extends View {
     private GameGrid gameGrid = new GameGrid();
     private GridPane gridPane = gameGrid.getGridPane();
     private List<ShopButton> shopButtons;
-    private Label playerStats;
+    private Label moneyLabel;
+    private Label healthLabel;
+    private Label levelLabel;
     private final List<String> gameMenuButtons = Arrays.asList("menuBtn", "playBtn", "sellBtn");
-    private final int SHOP_BTN_START_X = 1008;
-    private final int SHOP_BTN_START_Y = 66;
+    private final int SHOP_BTN_START_X = 1018;
+    private final int SHOP_BTN_START_Y = 128;
 
     public GameView(boolean loadGame) {
         super();
@@ -67,7 +73,9 @@ public class GameView extends View {
         } else {
             this.player = new Player();
         }
-        playerStats = player.getStats();
+        moneyLabel = player.createStatsLabel("money");
+        healthLabel = player.createStatsLabel("health");
+        levelLabel = player.createStatsLabel("level");
         displayPlayerStats();
     }
 
@@ -92,14 +100,19 @@ public class GameView extends View {
     }
 
     private void displayPlayerStats() {
-        super.addToMainPane(playerStats);
+        Image statsBg = new Image(Objects.requireNonNull(getClass().getResource("/images/gameScreen/playerStatsBg.png")).toExternalForm());
+        ImageView statsBgView = new ImageView(statsBg);
+        statsBgView.setX(305);
+        statsBgView.setY(0);
+
+        super.addToMainPane(statsBgView, moneyLabel, healthLabel, levelLabel);
     }
 
     public void createShop() {
         Image shopImg = new Image(Objects.requireNonNull(getClass().getResource("/images/gameScreen/shopBg.png")).toExternalForm());
         ImageView shopView = new ImageView(shopImg);
-        shopView.setX(960);
-        shopView.setY(0);
+        shopView.setX(970);
+        shopView.setY(60);
         super.addToMainPane(shopView);
 
         createShopButtons();
@@ -107,7 +120,8 @@ public class GameView extends View {
 
     public void addShopButtons(ShopButton shopBtn) {
         shopBtn.setLayoutX(SHOP_BTN_START_X);
-        shopBtn.setLayoutY(SHOP_BTN_START_Y + shopButtons.size() * 128);
+        shopBtn.setLayoutY(SHOP_BTN_START_Y + shopButtons.size() * 126);
+
         shopButtons.add(shopBtn);
         super.addToMainPane(shopBtn);
     }
@@ -119,6 +133,9 @@ public class GameView extends View {
         ShopButton shopDog = new ShopButton("shopDog");
         ShopButton shopFarmer = new ShopButton("shopFarmer");
 
+        Tooltip tooltip = new Tooltip("Path");
+        shopPath.setTooltip(tooltip);
+
         addShopButtons(shopPath);
         addShopButtons(shopSprinkler);
         addShopButtons(shopScarecrow);
@@ -128,13 +145,12 @@ public class GameView extends View {
 
     private void createMenuButtons(String btnName, int offsetX) {
         GameMenuButton menuBtn = new GameMenuButton(btnName);
-        menuBtn.setLayoutX(270 + offsetX * 120);
-        menuBtn.setLayoutY(64);
+        menuBtn.setLayoutX(350 + offsetX * 130);
+        menuBtn.setLayoutY(105);
         super.addToMainPane(menuBtn);
 
         switch (btnName) {
             case "menuBtn" -> menuBtn.setOnMouseClicked(event -> {
-                System.out.println("Menu button clicked");
                 createMenuPopup();
             });
             case "playBtn" -> menuBtn.setOnMouseClicked(event -> {
@@ -184,19 +200,10 @@ public class GameView extends View {
         popupWindow.setResizable(false);
         popupWindow.initStyle(StageStyle.TRANSPARENT);
 
-        Button close = new Button("close");
-        Button saveBtn = new Button("save game");
-        Button returnBtn = new Button("return to main menu");
-        Button exitBtn = new Button("exit game");
-
-        saveBtn.setTranslateX(50);
-        saveBtn.setTranslateY(10);
-        returnBtn.setTranslateX(50);
-        returnBtn.setTranslateY(10);
-        exitBtn.setTranslateX(50);
-        exitBtn.setTranslateY(10);
-        close.setTranslateX(160);
-        close.setTranslateY(10);
+        Button close = GameLogic.getButton("close");
+        Button saveBtn = GameLogic.getButton("save game");
+        Button returnBtn = GameLogic.getButton("back home");
+        Button quitGame = GameLogic.getButton("quit game");
 
         saveBtn.setOnAction(e -> {
             boolean saved = saveGame(player, gameGrid.getPlacedTowers(), gameGrid.getPlacedTiles());
@@ -210,7 +217,7 @@ public class GameView extends View {
             }
             super.addToMainPane(message);
         });
-        exitBtn.setOnAction(e -> {
+        quitGame.setOnAction(e -> {
             exitGame();
             popupWindow.close();
         });
@@ -223,15 +230,16 @@ public class GameView extends View {
         close.setOnAction(e -> popupWindow.close());
 
         Image bgImg = new Image(Objects.requireNonNull(
-                getClass().getResource("/images/gameScreen/ShopDog.png")).toExternalForm());
+                getClass().getResource("/images/gameButtons/menuPopupBg.png")).toExternalForm());
         BackgroundImage bg = new BackgroundImage(
                 bgImg, null, null, null, null);
 
-        VBox layout = new VBox(10);
+        VBox layout = new VBox(5);
         layout.setBackground(new Background(bg));
-        layout.getChildren().addAll(saveBtn, returnBtn, exitBtn, close);
+        layout.getChildren().addAll(close, saveBtn, returnBtn, quitGame);
+        layout.setAlignment(Pos.TOP_CENTER);
 
-        Scene scene = new Scene(layout, 224, 150);
+        Scene scene = new Scene(layout, 320, 256);
         scene.setFill(Color.TRANSPARENT);
 
         popupWindow.setScene(scene);

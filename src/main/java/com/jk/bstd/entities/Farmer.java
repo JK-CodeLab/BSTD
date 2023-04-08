@@ -11,7 +11,7 @@ public class Farmer extends Tower {
     public static final int ATTACK = 20;
     public static final int ATTACK_SPEED = 5;
     public static final int RANGE = 5;
-    public static final int COST = 40;
+    public static final int COST = 50;
 
     public Farmer(Point point) {
         super(point, ATTACK, ATTACK_SPEED, RANGE, COST);

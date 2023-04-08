@@ -50,6 +50,10 @@ public class View {
         mainPane.getChildren().add(node);
     }
 
+    public void addToMainPane(Node... nodes) {
+        mainPane.getChildren().addAll(nodes);
+    }
+
     public void createBackground(String imgPath) {
         Image bgImg = new Image(Objects.requireNonNull(getClass().getResource("/images/" + imgPath)).toExternalForm());
         BackgroundImage bgImgObj = new BackgroundImage(bgImg, null, null, null, null);
