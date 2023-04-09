@@ -11,26 +11,12 @@ import java.util.Objects;
  * @version 1.0
  */
 public class Chicken extends Animal {
-    /**
-     * Health of the chicken.
-     */
-    public static final int HEALTH = 200;
-    /**
-     * Attack of the chicken.
-     */
-    public static final int ATTACK = 10;
-    /**
-     * Gold dropped by the chicken.
-     */
-    public static final int GOLD_DROPPED = 1;
-    /**
-     * ImageView of the chicken.
-     */
-    public final ImageView imgView;
-    /**
-     * Image of the chicken.
-     */
-    public final Image img;
+    private static final int HEALTH = 200;
+    private static final int ATTACK = 10;
+    private static final int GOLD_DROPPED = 1;
+    private final ImageView imgView;
+    private final Image img;
+
     /**
      * Constructor for Chicken.
      */
@@ -40,6 +26,7 @@ public class Chicken extends Animal {
                 .getResource("/images/entities/Chicken.png")).toExternalForm());
         imgView = new ImageView(img);
     }
+
     /**
      * Returns the ImageView of the chicken.
      *

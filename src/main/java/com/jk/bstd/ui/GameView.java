@@ -226,14 +226,13 @@ public class GameView extends View {
                 }
             });
             case "sellBtn" -> menuBtn.setOnMouseClicked(event -> {
-                if (!player.isPlaying()) {
-                    if (player.isSelling()) {
-                        menuBtn.setIdleButtonStyle();
-                        player.setSelling(false);
-                    } else {
-                        menuBtn.setButtonPressedStyle();
-                        player.setSelling(true);
-                    }
+                System.out.println("selling" + player.isSelling());
+                if (!player.isPlaying() && !player.isSelling()) {
+                    menuBtn.setButtonPressedStyle();
+                    player.setSelling(true);
+                } else if (player.isSelling()) {
+                    menuBtn.setIdleButtonStyle();
+                    player.setSelling(false);
                 } else {
                     Label message = GameLogic.createErrorPopup("cannot sell while playing");
                     super.addToMainPane(message);
@@ -331,10 +330,9 @@ public class GameView extends View {
                     if (placedEntity != null) {
                         ImageView entityImgView = placedEntity.getImgView();
 
-                        gameGrid.addEntity(placedEntity);
-
                         boolean bought = GameLogic.buyEntity(placedEntity, player);
                         if (bought) {
+                            gameGrid.addEntity(placedEntity);
                             super.addToMainPane(entityImgView);
                         } else {
                             Label message = GameLogic.createErrorPopup("Not enough money");
@@ -408,7 +406,7 @@ public class GameView extends View {
     private void onEntityClicked(final MouseEvent e, final Entity entity) {
         Point firstTile = gameGrid.getPlacedTiles().get(0).getPoint();
 
-        if (player.isSelling() && entity.getPoint() != firstTile) {
+        if (player.isSelling() && entity.getPoint() != firstTile && !player.isPlaying()) {
             if (entity instanceof Tile) {
                 Tile lastTile = gameGrid.getPlacedTiles().get(gameGrid.getPlacedTiles().size() - 1);
                 if (entity.getPoint().equals(lastTile.getPoint())) {
@@ -427,6 +425,9 @@ public class GameView extends View {
             }
         } else if (entity.getPoint() == firstTile) {
             Label message = GameLogic.createErrorPopup("cannot sell the first tile");
+            super.addToMainPane(message);
+        } else if (player.isPlaying()) {
+            Label message = GameLogic.createErrorPopup("cannot sell while playing");
             super.addToMainPane(message);
         } else {
             Label message = GameLogic.createErrorPopup("click the hammer button to start selling");

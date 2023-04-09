@@ -21,6 +21,7 @@ public class GameMenuButton extends Button {
     private final String imgName;
     private Image btnImg;
     private Image btnPressedImg;
+
     /**
      * Constructor for a new game menu button.
      *
@@ -35,6 +36,7 @@ public class GameMenuButton extends Button {
         setPrefHeight(PREF_HEIGHT);
         initializeButtonListeners();
     }
+
     private void setImagePath() {
         btnImg = new Image(
                 Objects.requireNonNull(
@@ -66,9 +68,11 @@ public class GameMenuButton extends Button {
      * Initializes the button listeners.
      */
     private void initializeButtonListeners() {
-        setOnMousePressed(event -> setButtonPressedStyle());
+        if (!imgName.equals("sellBtn")) {
+            setOnMousePressed(event -> setButtonPressedStyle());
 
-        setOnMouseReleased(event -> setIdleButtonStyle());
+            setOnMouseReleased(event -> setIdleButtonStyle());
+        }
 
         setOnMouseEntered(event -> setEffect(new DropShadow()));
 
