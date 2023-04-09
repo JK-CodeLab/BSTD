@@ -143,7 +143,7 @@ public final class GameLogic {
         Timeline timeline = new Timeline();
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(speed), event -> {
             Chicken chicken = new Chicken();
-            if (player.isAlive()) {
+            if (player.getIsAlive()) {
                 spawnEnemy(pane, path, chicken, towers, player);
             } else {
                 timeline.stop();
@@ -195,7 +195,7 @@ public final class GameLogic {
                     }
                 }
             }
-            if (!player.isAlive()) {
+            if (!player.getIsAlive()) {
                 pt.stop();
                 if (!player.isGameOver()) {
                     player.setGameOver(true);
@@ -204,7 +204,7 @@ public final class GameLogic {
             }
         });
         pt.statusProperty().addListener((observableValue, status, t1) -> {
-            if (t1 == Animation.Status.STOPPED && !animal.getIsDead() && player.isAlive()) {
+            if (t1 == Animation.Status.STOPPED && !animal.getIsDead() && player.getIsAlive()) {
                 pane.getChildren().remove(imgView);
                 player.takeDamage(animal.getAttack());
             }

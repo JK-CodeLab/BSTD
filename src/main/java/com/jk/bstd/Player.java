@@ -141,7 +141,7 @@ public class Player {
      *
      * @return true if the player is alive, false otherwise
      */
-    public boolean isAlive() {
+    public boolean getIsAlive() {
         return isAlive;
     }
     /**
