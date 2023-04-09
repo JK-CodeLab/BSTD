@@ -1,53 +1,43 @@
 package com.jk.bstd.entities;
 
-import javafx.animation.TranslateTransition;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
-
+/**
+ * A farmer class for the farmer tower.
+ *
+ * @author Joseph Chun, Kira Yoon
+ * @version 1.0
+ */
 public class Farmer extends Tower {
-    public static final int ATTACK = 20;
-    public static final int ATTACK_SPEED = 5;
-    public static final int RANGE = 5;
-    public static final int COST = 50;
-
-    public Farmer(Point point) {
-        super(point, ATTACK, ATTACK_SPEED, RANGE, COST);
+    private static final int ATTACK = 20;
+    private static final int RANGE = 5;
+    private static final int COST = 50;
+    private static final int BULLET_VERTICAL_SIZE = 8;
+    private static final int BULLET_HORIZONTAL_SIZE = 4;
+    private static final int BULLET_OFFSET_X = 10;
+    private static final int BULLET_OFFSET_Y = 7;
+    /**
+     * Constructor for a new farmer tower.
+     *
+     * @param point the point to place the tower
+     */
+    public Farmer(final Point point) {
+        super(point, ATTACK, RANGE, COST);
     }
-
+    /**
+     * Creates a new attack animation for the tower.
+     *
+     * @param enemyLocation the location of the enemy
+     * @param pane the pane to add the animation to
+     */
     @Override
-    public void attackAnimation(Point2D enemyLocation, AnchorPane pane) {
-        //TODO: add projectile image to the game remove temp rectangle
-        Rectangle bullet = new Rectangle(8, 4, Color.BLACK);
-        bullet.setTranslateX(super.getPoint().getRealX() + 10);
-        bullet.setTranslateY(super.getPoint().getRealY() + 7);
+    public void attackAnimation(final Point2D enemyLocation, final AnchorPane pane) {
+        Rectangle bullet = new Rectangle(BULLET_VERTICAL_SIZE, BULLET_HORIZONTAL_SIZE, Color.BLACK);
+        bullet.setTranslateX(super.getPoint().getRealX() + BULLET_OFFSET_X);
+        bullet.setTranslateY(super.getPoint().getRealY() + BULLET_OFFSET_Y);
         pane.getChildren().add(bullet);
-        TranslateTransition tt = new TranslateTransition(Duration.millis(150), bullet);
-        double enemyX = enemyLocation.getX();
-        double enemyY = enemyLocation.getY();
-        tt.setToX(enemyX);
-        tt.setToY(enemyY);
-        tt.setCycleCount(1);
-        tt.setOnFinished(finishedEvent -> {
-            pane.getChildren().remove(bullet);
-            this.hasTarget = false;
-        });
-        tt.play();
-    }
-
-    public int getCost() {
-        return COST;
-    }
-
-    @Override
-    void upgrade() {
-        return;
-    }
-
-    @Override
-    Entity selectTarget() {
-        return null;
+        super.createTransition(bullet, enemyLocation, pane);
     }
 }
