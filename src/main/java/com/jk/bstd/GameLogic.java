@@ -151,9 +151,6 @@ public final class GameLogic {
                 spawnEnemy(pane, path, chicken, towers, player);
             } else {
                 timeline.stop();
-
-                MainMenuView mainMenuView = new MainMenuView();
-                createGameOverPopup(mainMenuView.getMainStage(), pane.getScene().getWindow());
             }
         });
 
@@ -212,6 +209,10 @@ public final class GameLogic {
             }
             if (!player.isAlive()) {
                 pt.stop();
+                if (!player.isGameOver()) {
+                    player.setGameOver(true);
+                    createGameOverPopup(pane.getScene().getWindow());
+                }
             }
         });
         pt.statusProperty().addListener(new ChangeListener<Animation.Status>() {
@@ -399,11 +400,11 @@ public final class GameLogic {
     /**
      * Creates a popup window for game over.
      *
-     * @param mainStage the main stage
      * @param gameWindow the game window
      */
-    public static void createGameOverPopup(final Stage mainStage, final Window gameWindow) {
+    public static void createGameOverPopup(final Window gameWindow) {
         Stage popupWindow = new Stage();
+        Stage mainStage = new MainMenuView().getMainStage();
 
         popupWindow.initModality(Modality.APPLICATION_MODAL);
         popupWindow.setAlwaysOnTop(true);
@@ -437,6 +438,11 @@ public final class GameLogic {
 
         Scene scene = new Scene(layout, SCENE_WIDTH, SCENE_HEIGHT);
         scene.setFill(Color.TRANSPARENT);
+
+        // set the location of the popup window to the center of the game window
+        popupWindow.setX(gameWindow.getX() + (gameWindow.getWidth() / 2) - (SCENE_WIDTH / 2.0));
+        popupWindow.setY(gameWindow.getY() + (gameWindow.getHeight() / 2) - (SCENE_HEIGHT / 2.0));
+
 
         popupWindow.setScene(scene);
         popupWindow.show();

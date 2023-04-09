@@ -39,6 +39,7 @@ public class Player {
     private boolean isAlive = true;
     private boolean isSelling = false;
     private boolean isPlaying = false;
+    private boolean gameOver = false;
     private final Label moneyLabel = new Label();
     private final Label healthLabel = new Label();
     private final Label levelLabel = new Label();
@@ -51,6 +52,7 @@ public class Player {
         this.health = DEFAULT_HEALTH;
         this.level = DEFAULT_LEVEL;
     }
+
     /**
      * Create a player object with custom values.
      *
@@ -72,6 +74,7 @@ public class Player {
     public int getMoney() {
         return money;
     }
+
     /**
      * Sets the player's money to the given amount.
      *
@@ -81,6 +84,7 @@ public class Player {
         this.money = money;
         updateStats();
     }
+
     /**
      * Adds money to the player's current amount.
      *
@@ -90,6 +94,7 @@ public class Player {
         this.money += moneyToAdd;
         updateStats();
     }
+
     /**
      * Removes money from the player's current amount.
      *
@@ -99,6 +104,7 @@ public class Player {
         this.money -= moneyToRemove;
         updateStats();
     }
+
     /**
      * Returns the player's health as an int.
      *
@@ -107,6 +113,7 @@ public class Player {
     public int getHealth() {
         return health;
     }
+
     /**
      * Reduces the player's health by the given amount.
      *
@@ -119,6 +126,7 @@ public class Player {
         }
         updateStats();
     }
+
     /**
      * Returns the players current level.
      *
@@ -127,6 +135,7 @@ public class Player {
     public int getLevel() {
         return level;
     }
+
     /**
      * Sets the player's level to the given level.
      *
@@ -136,6 +145,7 @@ public class Player {
         this.level = level;
         updateStats();
     }
+
     /**
      * Returns whether the player is alive or not.
      *
@@ -144,6 +154,7 @@ public class Player {
     public boolean isAlive() {
         return isAlive;
     }
+
     /**
      * Sets the player's alive status to the given boolean.
      *
@@ -153,6 +164,7 @@ public class Player {
         isAlive = alive;
         updateStats();
     }
+
     /**
      * Returns whether the player is in selling mode or not.
      *
@@ -161,6 +173,7 @@ public class Player {
     public boolean isSelling() {
         return isSelling;
     }
+
     /**
      * Sets the player's selling status to the given boolean.
      *
@@ -170,6 +183,7 @@ public class Player {
         isSelling = selling;
         updateStats();
     }
+
     /**
      * Returns whether the player is playing or not.
      *
@@ -178,6 +192,7 @@ public class Player {
     public boolean isPlaying() {
         return isPlaying;
     }
+
     /**
      * Sets the player's playing status to the given boolean.
      *
@@ -189,7 +204,26 @@ public class Player {
     }
 
     /**
-     * Updates the player's stats.
+     * Returns whether the game is over or not.
+     *
+     * @return true if the game is over, false otherwise
+     */
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    /**
+     * Sets the game over status to the given boolean.
+     *
+     * @param gameOver true if the game is over, false otherwise
+     */
+    public void setGameOver(final boolean gameOver) {
+        this.gameOver = gameOver;
+        updateStats();
+    }
+
+    /**
+     * Creates and returns a label for the player's stats.
      *
      * @param labelName the name of the label to update
      * @return the updated label
@@ -222,6 +256,7 @@ public class Player {
             }
         }
     }
+
     /**
      * Updates the player's stats.
      */

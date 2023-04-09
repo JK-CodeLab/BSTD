@@ -11,6 +11,7 @@ import com.jk.bstd.entities.Farmer;
 import com.jk.bstd.entities.Scarecrow;
 import com.jk.bstd.entities.Dog;
 import javafx.geometry.Pos;
+import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -291,6 +292,10 @@ public class GameView extends View {
         Scene scene = new Scene(layout, SCENE_X, SCENE_Y);
         scene.setFill(Color.TRANSPARENT);
 
+        // set the location of the popup window to the center of the game window
+        popupWindow.setX(gameStage.getX() + (gameStage.getWidth() / 2) - (SCENE_X / 2.0));
+        popupWindow.setY(gameStage.getY() + (gameStage.getHeight() / 2) - (SCENE_Y / 2.0));
+
         popupWindow.setScene(scene);
         popupWindow.showAndWait();
     }
@@ -310,6 +315,9 @@ public class GameView extends View {
                         boolean isAdjacent = isAdjacent(mousePoint);
                         if (isAdjacent) {
                             placedEntity = new Tile(mousePoint);
+                        } else {
+                            Label message = GameLogic.createErrorPopup("path must be placed adjacent to the last path");
+                            super.addToMainPane(message);
                         }
                     } else if (item.equals("Sprinkler")) {
                         placedEntity = new Sprinkler(mousePoint);
@@ -336,6 +344,9 @@ public class GameView extends View {
                         Entity finalPlacedEntity = placedEntity;
                         entityImgView.setOnMouseClicked(e -> onEntityClicked(e, finalPlacedEntity));
                     }
+                } else {
+                    Label message = GameLogic.createErrorPopup("something is already placed here");
+                    super.addToMainPane(message);
                 }
             }
             event.setDropCompleted(true);
@@ -395,12 +406,31 @@ public class GameView extends View {
         e.consume();
     }
     private void onEntityClicked(final MouseEvent e, final Entity entity) {
-        if (player.isSelling()) {
-            System.out.println("entity sold: " + entity.getName());
-            gameGrid.removeEntity(entity);
-            super.getMainPane().getChildren().remove(entity.getImgView());
+        Point firstTile = gameGrid.getPlacedTiles().get(0).getPoint();
 
-            GameLogic.sellEntity(entity, player);
+        if (player.isSelling() && entity.getPoint() != firstTile) {
+            if (entity instanceof Tile) {
+                Tile lastTile = gameGrid.getPlacedTiles().get(gameGrid.getPlacedTiles().size() - 1);
+                if (entity.getPoint().equals(lastTile.getPoint())) {
+                    gameGrid.removeEntity(entity);
+                    super.getMainPane().getChildren().remove(entity.getImgView());
+                    GameLogic.sellEntity(entity, player);
+                } else {
+                    Label message = GameLogic.createErrorPopup("start selling from the last tile");
+                    super.addToMainPane(message);
+                }
+            } else {
+                gameGrid.removeEntity(entity);
+                super.getMainPane().getChildren().remove(entity.getImgView());
+
+                GameLogic.sellEntity(entity, player);
+            }
+        } else if (entity.getPoint() == firstTile) {
+            Label message = GameLogic.createErrorPopup("cannot sell the first tile");
+            super.addToMainPane(message);
+        } else {
+            Label message = GameLogic.createErrorPopup("click the hammer button to start selling");
+            super.addToMainPane(message);
         }
     }
     private Point getPointFromMousePosition(final DragEvent e) {
