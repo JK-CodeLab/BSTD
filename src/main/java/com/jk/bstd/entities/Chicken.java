@@ -4,28 +4,47 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.util.Objects;
-
+/**
+ * Chicken class.
+ *
+ * @author Joseph Chun, Kira Yoon
+ * @version 1.0
+ */
 public class Chicken extends Animal {
+    /**
+     * Health of the chicken.
+     */
     public static final int HEALTH = 200;
-    public static final int SPEED = 4;
+    /**
+     * Attack of the chicken.
+     */
     public static final int ATTACK = 10;
+    /**
+     * Gold dropped by the chicken.
+     */
     public static final int GOLD_DROPPED = 1;
-    public ImageView imgView;
-    public Image img;
-
+    /**
+     * ImageView of the chicken.
+     */
+    public final ImageView imgView;
+    /**
+     * Image of the chicken.
+     */
+    public final Image img;
+    /**
+     * Constructor for Chicken.
+     */
     public Chicken() {
-        // TODO: Change spawn point
-        // TODO: Change image
-        super(HEALTH, SPEED, ATTACK, GOLD_DROPPED);
+        super(HEALTH, ATTACK, GOLD_DROPPED);
         img = new Image(Objects.requireNonNull(getClass()
                 .getResource("/images/entities/Chicken.png")).toExternalForm());
         imgView = new ImageView(img);
     }
-    // TODO: Implement move method
-    // chicken should move 1 space per 1 unit of time
-    @Override
-    public void move() {}
-    // TODO: fix get imgview
+    /**
+     * Returns the ImageView of the chicken.
+     *
+     * @return the ImageView of the chicken
+     */
     @Override
     public ImageView getImgView() {
         return imgView;
