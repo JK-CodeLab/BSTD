@@ -1,6 +1,11 @@
 package com.jk.bstd;
 
-import com.jk.bstd.entities.*;
+import com.jk.bstd.entities.Tower;
+import com.jk.bstd.entities.Tile;
+import com.jk.bstd.entities.Point;
+import com.jk.bstd.entities.Chicken;
+import com.jk.bstd.entities.Entity;
+import com.jk.bstd.entities.Animal;
 import com.jk.bstd.ui.GameGrid;
 import com.jk.bstd.ui.MainMenuView;
 import javafx.beans.value.ChangeListener;
@@ -14,7 +19,14 @@ import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -22,66 +34,122 @@ import javafx.scene.shape.Path;
 
 
 //TODO: remove, just for test
-import javafx.animation.*;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+import javafx.animation.PathTransition;
+import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.util.Duration;
-//import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static com.jk.bstd.SaveGame.saveGame;
-
+/**
+ * This class is used to create game logic functions.
+ * It is a utility class and cannot be instantiated.
+ *
+ * @author Joseph Chun, Kira Yoon
+ * @version 1.0
+ */
 public final class GameLogic {
+    private static final int ENEMY_PER_LEVEL = 15;
     private static final int GRID_SIZE = 64;
+    private static final int STARTING_Y_OFFSET = 32;
+    private static final int STARTING_X_OFFSET = 32;
+    private static final int Y_OFFSET = 64;
+    private static final double SPAWN_SPEED_MODIFIER = 1.5;
+    private static final int ENEMY_SPAWN_OFFSET_X = 128;
+    private static final int ENEMY_SPAWN_OFFSET_Y = 224;
+    private static final String ERROR_POPUP_BG_PATH = "/images/gameButtons/errorPopupBg.png";
+    private static final int LABEL_FONT_SIZE = 20;
+    private static final int LABEL_LAYOUT_X = 480;
+    private static final int LABEL_LAYOUT_Y = 730;
+    private static final int LABEL_PREF_WIDTH = 320;
+    private static final int LABEL_PREF_HEIGHT = 88;
+    private static final int LABEL_PADDING_TOP = 10;
+    private static final int LABEL_PADDING_RIGHT = 10;
+    private static final int LABEL_PADDING_BOTTOM = 10;
+    private static final int LABEL_PADDING_LEFT = 90;
+    private static final Duration FADE_IN_DURATION = Duration.seconds(1);
+    private static final Duration FADE_OUT_DURATION = Duration.seconds(2);
+    private static final Duration FADE_OUT_DELAY = Duration.seconds(4);
+    private static final int CLOSE_BTN_SIZE = 50;
+    private static final int CLOSE_BTN_X = 135;
+    private static final int CLOSE_BTN_Y = 15;
+    private static final int BTN_WIDTH = 163;
+    private static final int BTN_HEIGHT = 50;
+    private static  final int FONT_SIZE = 25;
+    private static final int VBOX_SPACING = 13;
+    private static final int SCENE_WIDTH = 320;
+    private static final int SCENE_HEIGHT = 256;
 
     private GameLogic() throws IllegalAccessException {
         throw new IllegalAccessException("Cannot instantiate GameLogic");
     }
 
-    public static void play(Player player, GameGrid gameGrid, GridPane gridPane, AnchorPane pane) {
-        int numEnemies = player.getLevel() * 15;
+    /**
+     * Creates a function for the play button.
+     *
+     * @param player the player
+     * @param gameGrid the game grid
+     * @param gridPane the grid pane
+     * @param pane the anchor pane
+     */
+    public static void play(final Player player,
+                            final GameGrid gameGrid,
+                            final GridPane gridPane,
+                            final AnchorPane pane) {
+        int numEnemies = player.getLevel() * ENEMY_PER_LEVEL;
 
         Path path = createPath(gameGrid.getPlacedTiles(), gridPane);
         spawnEnemies(path, numEnemies, pane, gameGrid.getPlacedTowers(), player);
         player.setPlaying(true);
     }
-
-    public static Path createPath(ArrayList<Tile> tiles, GridPane gridPane) {
+    /**
+     * Draws a path for the enemies to follow.
+     *
+     * @param tiles the tiles
+     * @param gridPane the grid pane
+     * @return the path
+     */
+    public static Path createPath(final ArrayList<Tile> tiles, final GridPane gridPane) {
         Path path = new Path();
-        path.setStroke(Color.RED);
-        path.setStrokeWidth(5);
 
-        Point point = convertToGridPaneXandY(tiles.get(0).getPoint(), gridPane);
-        MoveTo start = new MoveTo(point.getX(), point.getY() - 32);
+        Point point = convertToGridPaneXAndY(tiles.get(0).getPoint(), gridPane);
+        MoveTo start = new MoveTo(point.getX(), point.getY() - STARTING_Y_OFFSET);
         path.getElements().add(start);
 
         for (int i = 1; i < tiles.size(); i++) {
-            point = convertToGridPaneXandY(tiles.get(i).getPoint(), gridPane);
+            point = convertToGridPaneXAndY(tiles.get(i).getPoint(), gridPane);
             LineTo line = new LineTo(point.getX(), point.getY());
             path.getElements().add(line);
 
             if (i == tiles.size() - 1) {
-                LineTo line1 = new LineTo(point.getX(), point.getY() - 64);
+                LineTo line1 = new LineTo(point.getX(), point.getY() - Y_OFFSET);
                 path.getElements().add(line1);
             }
         }
         return path;
     }
 
-    private static void spawnEnemies(Path path, int numEnemies, AnchorPane pane, ArrayList<Tower> towers, Player player) {
-        double speed = 1.5 / player.getLevel();
+    private static void spawnEnemies(final Path path,
+                                     final int numEnemies,
+                                     final AnchorPane pane,
+                                     final ArrayList<Tower> towers,
+                                     final Player player) {
+        double speed = SPAWN_SPEED_MODIFIER / player.getLevel();
         Timeline timeline = new Timeline();
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(speed), event -> {
             Chicken chicken = new Chicken();
             if (player.isAlive()) {
                 spawnEnemy(pane, path, chicken, towers, player);
             } else {
-                System.out.println("Game Over");
                 timeline.stop();
 
                 MainMenuView mainMenuView = new MainMenuView();
@@ -94,7 +162,9 @@ public final class GameLogic {
         timeline.play();
         timeline.statusProperty().addListener(new ChangeListener<Animation.Status>() {
             @Override
-            public void changed(ObservableValue<? extends Animation.Status> observableValue, Animation.Status status, Animation.Status t1) {
+            public void changed(final ObservableValue<? extends Animation.Status> observableValue,
+                                final Animation.Status status,
+                                final Animation.Status t1) {
                 if (t1 == Animation.Status.STOPPED) {
                     player.setPlaying(false);
                 }
@@ -104,9 +174,12 @@ public final class GameLogic {
             player.setPlaying(false);
         });
     }
-
-    private static void spawnEnemy(AnchorPane pane, Path path, Animal animal, ArrayList<Tower> towers, Player player) {
-        PathTransition pt = new PathTransition(Duration.seconds(path.getElements().size()),path);
+    private static void spawnEnemy(final AnchorPane pane,
+                                   final Path path,
+                                   final Animal animal,
+                                   final ArrayList<Tower> towers,
+                                   final Player player) {
+        PathTransition pt = new PathTransition(Duration.seconds(path.getElements().size()), path);
 //        PathTransition pt = new PathTransition(Duration.seconds(2), path); // TODO: remove (for faster testing)
 
         ImageView imgView = animal.getImgView();
@@ -114,18 +187,19 @@ public final class GameLogic {
         pt.setRate(1);
         pt.setInterpolator(Interpolator.LINEAR);
 
-        imgView.setTranslateX(128);
-        imgView.setTranslateY(224);
+        imgView.setTranslateX(ENEMY_SPAWN_OFFSET_X);
+        imgView.setTranslateY(ENEMY_SPAWN_OFFSET_Y);
         pane.getChildren().add(imgView);
-
-
         pt.currentTimeProperty().addListener((observableValue, duration, t1) -> {
-            Point2D enemyLocation = new Point2D(imgView.getTranslateX() + 32, imgView.getTranslateY() + 32);
+            Point2D enemyLocation = new Point2D(
+                    imgView.getTranslateX() + STARTING_X_OFFSET,
+                    imgView.getTranslateY() + STARTING_Y_OFFSET
+            );
             for (Tower tower : towers) {
-                int towerX = tower.getPoint().getRealX() + 32;
-                int towerY = tower.getPoint().getRealY() + 32;
+                int towerX = tower.getPoint().getRealX() + STARTING_X_OFFSET;
+                int towerY = tower.getPoint().getRealY() + STARTING_Y_OFFSET;
                 Point2D towerLocation = new Point2D(towerX, towerY);
-                if (enemyLocation.distance(towerLocation) < tower.getRange()  * 64 &&  !tower.getHasTarget()) {
+                if (enemyLocation.distance(towerLocation) < tower.getRange()  * Y_OFFSET &&  !tower.getHasTarget()) {
                     tower.setHasTarget(true);
                     tower.attackAnimation(enemyLocation, pane);
                     animal.takeDamage(tower.getAttack());
@@ -136,14 +210,15 @@ public final class GameLogic {
                     }
                 }
             }
-
             if (!player.isAlive()) {
                 pt.stop();
             }
         });
         pt.statusProperty().addListener(new ChangeListener<Animation.Status>() {
             @Override
-            public void changed(ObservableValue<? extends Animation.Status> observableValue, Animation.Status status, Animation.Status t1) {
+            public void changed(final ObservableValue<? extends Animation.Status> observableValue,
+                                final Animation.Status status,
+                                final Animation.Status t1) {
                 if (t1 == Animation.Status.STOPPED && !animal.getIsDead() && player.isAlive()) {
                     pane.getChildren().remove(imgView);
                     player.takeDamage(animal.getAttack());
@@ -153,26 +228,37 @@ public final class GameLogic {
         pt.play();
     }
 
-    private static Point convertToGridPaneXandY(Point point, GridPane gridPane) {
+    private static Point convertToGridPaneXAndY(final Point point, final GridPane gridPane) {
         double offsetX = gridPane.getLayoutX(); // 64
         double offsetY = gridPane.getLayoutY(); // 256 = 64 * 4
 
         int pointX = point.getX(); // 1
         int pointY = point.getY(); // 0
 
-        int newY = (int) (pointY * GRID_SIZE + offsetY + 32); // 0 * 64 + 256 + 32 = 288
-        int newX = (int) (pointX * GRID_SIZE + offsetX + 32); // 64 + 2 * 64 = 192
+        int newY = (int) (pointY * GRID_SIZE + offsetY + STARTING_Y_OFFSET); // 0 * 64 + 256 + 32 = 288
+        int newX = (int) (pointX * GRID_SIZE + offsetX + STARTING_X_OFFSET); // 64 + 2 * 64 = 192
 
         return new Point(newX, newY);
     }
-
-
-    public static void sellEntity(Entity entity, Player player) {
+    /**
+     * Sells an entity and adds the cost to the player's money.
+     *
+     * @param entity the entity to be sold
+     * @param player the player selling the entity
+     */
+    public static void sellEntity(final Entity entity, final Player player) {
         int cost = entity.getCost();
         player.addMoney(cost);
     }
 
-    public static boolean buyEntity(Entity entity, Player player) {
+    /**
+     * Buys an entity and removes the cost from the player's money.
+     *
+     * @param entity the entity to be bought
+     * @param player the player buying the entity
+     * @return true if the player has enough money to buy the entity, false otherwise
+     */
+    public static boolean buyEntity(final Entity entity, final Player player) {
         if (player.getMoney() - entity.getCost() >= 0) {
             int cost = entity.getCost();
             player.removeMoney(cost);
@@ -181,16 +267,28 @@ public final class GameLogic {
             return false;
         }
     }
-
-    public static boolean checkLastTilePosition(ArrayList<Tile> tiles, int x, int y) {
+    /**
+     * Checks if the last tile in the list is at the given position.
+     *
+     * @param tiles the list of tiles
+     * @param x the x position to check
+     * @param y the y position to check
+     * @return true if the last tile in the list is at the given position, false otherwise
+     */
+    public static boolean checkLastTilePosition(final ArrayList<Tile> tiles, final int x, final int y) {
         if (tiles.size() == 0) {
             return false;
         }
         Tile lastTile = tiles.get(tiles.size() - 1);
         return lastTile.getPoint().getX() == x && lastTile.getPoint().getY() == y;
     }
-
-    public static boolean checkIfTilesAreConnected(ArrayList<Tile> tiles) {
+    /**
+     * Checks if the tiles in the given list of tiles are connected.
+     *
+     * @param tiles the list of tiles
+     * @return true if the tiles in the given list of tiles are connected, false otherwise
+     */
+    public static boolean checkIfTilesAreConnected(final ArrayList<Tile> tiles) {
         if (tiles.size() < 2) {
             return false;
         }
@@ -203,74 +301,108 @@ public final class GameLogic {
         }
         return true;
     }
-
-    private static boolean isConnectedTo(Tile tile, Tile otherTile) {
+    private static boolean isConnectedTo(final Tile tile, final Tile otherTile) {
         int x = tile.getPoint().getX();
         int y = tile.getPoint().getY();
         int otherX = otherTile.getPoint().getX();
         int otherY = otherTile.getPoint().getY();
-        return (x == otherX && (y == otherY + 1 || y == otherY - 1)) || (y == otherY && (x == otherX + 1 || x == otherX - 1));
+        return (x == otherX && (y == otherY + 1 || y == otherY - 1))
+                || (y == otherY && (x == otherX + 1 || x == otherX - 1));
     }
-
-    public static Label createErrorPopup(String text) {
-        Image img = new Image(Objects.requireNonNull(GameLogic.class.getResource("/images/gameButtons/errorPopupBg.png")).toExternalForm());
-        BackgroundImage backgroundImage = new BackgroundImage(img, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+    /**
+     * Creates an error popup with the given text.
+     *
+     * @param text the text to be displayed
+     * @return the error popup label
+     */
+    public static Label createErrorPopup(final String text) {
+        Image img = new Image(
+                Objects.requireNonNull(
+                        GameLogic.class.getResource(ERROR_POPUP_BG_PATH)
+                ).toExternalForm()
+        );
+        BackgroundImage backgroundImage = new BackgroundImage(
+                img,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT
+        );
 
         Label label = new Label(text);
-        label.setFont(new Font("Munro", 20));
+        label.setFont(new Font("Munro", LABEL_FONT_SIZE));
         label.setBackground(new Background(backgroundImage));
 
-        label.setLayoutX(480);
-        label.setLayoutY(730);
-        label.setPrefWidth(320);
-        label.setPrefHeight(88);
+        label.setLayoutX(LABEL_LAYOUT_X);
+        label.setLayoutY(LABEL_LAYOUT_Y);
+        label.setPrefWidth(LABEL_PREF_WIDTH);
+        label.setPrefHeight(LABEL_PREF_HEIGHT);
 
-        label.setPadding(new Insets(10, 10, 10, 90));
+        label.setPadding(new Insets(LABEL_PADDING_TOP, LABEL_PADDING_RIGHT, LABEL_PADDING_BOTTOM, LABEL_PADDING_LEFT));
         label.setWrapText(true);
         label.setAlignment(Pos.CENTER_LEFT);
 
-        FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), label);
+        FadeTransition fadeIn = new FadeTransition(FADE_IN_DURATION, label);
         fadeIn.setFromValue(0);
         fadeIn.setToValue(1);
         fadeIn.play();
 
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(2), label);
+        FadeTransition fadeOut = new FadeTransition(FADE_OUT_DURATION, label);
         fadeOut.setFromValue(1);
         fadeOut.setToValue(0);
-        fadeOut.setDelay(Duration.seconds(4)); // Add a delay of 4 seconds before starting the fade-out
+        fadeOut.setDelay(FADE_OUT_DELAY);
         fadeOut.play();
 
         return label;
     }
-
-    public static Button getButton(String btnName) {
+    /**
+     * Creates a button with the given name.
+     *
+     * @param btnName the name of the button
+     * @return the button
+     */
+    public static Button getButton(final String btnName) {
         Image btnBg;
         Button btn;
         if (btnName.equals("close")) {
-            btnBg = new Image(Objects.requireNonNull(GameLogic.class.getResource("/images/gameButtons/closeBtn.png")).toExternalForm());
+            btnBg = new Image(Objects.requireNonNull(
+                    GameLogic.class.getResource("/images/gameButtons/closeBtn.png")).toExternalForm()
+            );
             btn = new Button();
-            btn.setPrefSize(50, 50);
-            btn.setTranslateX(135);
-            btn.setTranslateY(15);
+            btn.setPrefSize(CLOSE_BTN_SIZE, CLOSE_BTN_SIZE);
+            btn.setTranslateX(CLOSE_BTN_X);
+            btn.setTranslateY(CLOSE_BTN_Y);
         } else {
-            btnBg = new Image(Objects.requireNonNull(GameLogic.class.getResource("/images/gameButtons/btnBg.png")).toExternalForm());
+            btnBg = new Image(Objects.requireNonNull(
+                    GameLogic.class.getResource("/images/gameButtons/btnBg.png")).toExternalForm()
+            );
             btn = new Button(btnName);
-            btn.setPrefSize(163, 50);
+            btn.setPrefSize(BTN_WIDTH, BTN_HEIGHT);
         }
-        BackgroundImage backgroundImage = new BackgroundImage(btnBg, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+        BackgroundImage backgroundImage = new BackgroundImage(
+                btnBg,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT
+        );
         Background background = new Background(backgroundImage);
 
         btn.setBackground(background);
         btn.setAlignment(Pos.TOP_CENTER);
-        btn.setFont(Font.font("Munro", 25));
-
+        btn.setFont(Font.font("Munro", FONT_SIZE));
         btn.setOnMouseEntered(event -> btn.setEffect(new DropShadow()));
         btn.setOnMouseExited(event -> btn.setEffect(null));
 
         return btn;
     }
-
-    public static void createGameOverPopup(Stage mainStage, Window gameWindow) {
+    /**
+     * Creates a popup window for game over.
+     *
+     * @param mainStage the main stage
+     * @param gameWindow the game window
+     */
+    public static void createGameOverPopup(final Stage mainStage, final Window gameWindow) {
         Stage popupWindow = new Stage();
 
         popupWindow.initModality(Modality.APPLICATION_MODAL);
@@ -292,16 +424,18 @@ public final class GameLogic {
             System.exit(0);
         });
 
-        Image bgImg = new Image(Objects.requireNonNull(GameLogic.class.getResourceAsStream("/images/gameButtons/gameOverPopupBg.png")));
+        Image bgImg = new Image(Objects.requireNonNull(
+                GameLogic.class.getResourceAsStream("/images/gameButtons/gameOverPopupBg.png"))
+        );
         BackgroundImage bg = new BackgroundImage(
                 bgImg, null, null, null, null);
 
-        VBox layout = new VBox(13);
+        VBox layout = new VBox(VBOX_SPACING);
         layout.setBackground(new Background(bg));
         layout.getChildren().addAll(returnBtn, quitBtn);
         layout.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(layout, 320, 256);
+        Scene scene = new Scene(layout, SCENE_WIDTH, SCENE_HEIGHT);
         scene.setFill(Color.TRANSPARENT);
 
         popupWindow.setScene(scene);
