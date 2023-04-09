@@ -11,7 +11,6 @@ import com.jk.bstd.entities.Farmer;
 import com.jk.bstd.entities.Scarecrow;
 import com.jk.bstd.entities.Dog;
 import javafx.geometry.Pos;
-import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,7 +18,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -49,6 +47,7 @@ import static com.jk.bstd.SaveGame.saveGame;
  * @version 1.0
  */
 public class GameView extends View {
+    private static final String ERROR_POP_UP_TILE = "path must be placed adjacent to the last path";
     private static final int SHOP_BTN_START_X = 1018;
     private static final int SHOP_BTN_START_Y = 128;
     private static final int PLAYER_STATS_X = 305;
@@ -194,6 +193,24 @@ public class GameView extends View {
         addShopButtons(shopDog);
         addShopButtons(shopFarmer);
     }
+    private void determineMessage(final boolean tilesConnected, final boolean lastTileCorrect) {
+        if (!player.getIsAlive()) {
+            Label message = GameLogic.createErrorPopup("You are dead");
+            super.addToMainPane(message);
+        } else if (!tilesConnected) {
+            Label message = GameLogic.createErrorPopup("Tiles are not connected");
+            super.addToMainPane(message);
+        } else if (!lastTileCorrect) {
+            Label message = GameLogic.createErrorPopup("Last tile must reach the end");
+            super.addToMainPane(message);
+        } else if (player.isPlaying()) {
+            Label message = GameLogic.createErrorPopup("You are already playing");
+            super.addToMainPane(message);
+        } else {
+            player.setLevel(player.getLevel() + 1);
+            GameLogic.play(player, gameGrid, gridPane, super.getMainPane());
+        }
+    }
 
     private void createMenuButtons(final String btnName, final int offsetX) {
         GameMenuButton menuBtn = new GameMenuButton(btnName);
@@ -207,23 +224,7 @@ public class GameView extends View {
 
                 boolean tilesConnected = GameLogic.checkIfTilesAreConnected(gameGrid.getPlacedTiles());
                 boolean lastTileCorrect = GameLogic.checkLastTilePosition(gameGrid.getPlacedTiles(), TILE_X, 0);
-
-                if (!player.isAlive()) {
-                    Label message = GameLogic.createErrorPopup("You are dead");
-                    super.addToMainPane(message);
-                } else if (!tilesConnected) {
-                    Label message = GameLogic.createErrorPopup("Tiles are not connected");
-                    super.addToMainPane(message);
-                } else if (!lastTileCorrect) {
-                    Label message = GameLogic.createErrorPopup("Last tile must reach the end");
-                    super.addToMainPane(message);
-                } else if (player.isPlaying()) {
-                    Label message = GameLogic.createErrorPopup("You are already playing");
-                    super.addToMainPane(message);
-                } else {
-                    player.setLevel(player.getLevel() + 1);
-                    GameLogic.play(player, gameGrid, gridPane, super.getMainPane());
-                }
+                determineMessage(tilesConnected, lastTileCorrect);
             });
             case "sellBtn" -> menuBtn.setOnMouseClicked(event -> {
                 System.out.println("selling" + player.isSelling());
@@ -242,6 +243,16 @@ public class GameView extends View {
             }
         }
     }
+    private void gameSavedMessage(final Boolean saved) {
+        Label message;
+        if (saved) {
+            message = GameLogic.createErrorPopup("Game saved");
+        } else {
+            message = GameLogic.createErrorPopup("Error saving");
+        }
+        super.addToMainPane(message);
+
+    }
     private void createMenuPopup() {
         Stage popupWindow = new Stage();
 
@@ -258,14 +269,7 @@ public class GameView extends View {
         saveBtn.setOnAction(e -> {
             boolean saved = saveGame(player, gameGrid.getPlacedTowers(), gameGrid.getPlacedTiles());
             popupWindow.close();
-
-            Label message;
-            if (saved) {
-                message = GameLogic.createErrorPopup("Game saved");
-            } else {
-                message = GameLogic.createErrorPopup("Error saving");
-            }
-            super.addToMainPane(message);
+            gameSavedMessage(saved);
         });
         quitGame.setOnAction(e -> {
             exitGame();
@@ -310,22 +314,20 @@ public class GameView extends View {
 
                 Entity placedEntity = null;
                 if (isEmpty) {
-                    if (item.equals("Tile")) {
-                        boolean isAdjacent = isAdjacent(mousePoint);
-                        if (isAdjacent) {
-                            placedEntity = new Tile(mousePoint);
-                        } else {
-                            Label message = GameLogic.createErrorPopup("path must be placed adjacent to the last path");
-                            super.addToMainPane(message);
+                    switch (item) {
+                        case "Tile" -> {
+                            boolean isAdjacent = isAdjacent(mousePoint);
+                            if (isAdjacent) {
+                                placedEntity = new Tile(mousePoint);
+                            } else {
+                                Label message = GameLogic.createErrorPopup(ERROR_POP_UP_TILE);
+                                super.addToMainPane(message);
+                            }
                         }
-                    } else if (item.equals("Sprinkler")) {
-                        placedEntity = new Sprinkler(mousePoint);
-                    } else if (item.equals("Scarecrow")) {
-                        placedEntity = new Scarecrow(mousePoint);
-                    } else if (item.equals("Farmer")) {
-                        placedEntity = new Farmer(mousePoint);
-                    } else if (item.equals("Dog")) {
-                        placedEntity = new Dog(mousePoint);
+                        case "Sprinkler" -> placedEntity = new Sprinkler(mousePoint);
+                        case "Scarecrow" -> placedEntity = new Scarecrow(mousePoint);
+                        case "Farmer" -> placedEntity = new Farmer(mousePoint);
+                        default -> placedEntity = new Dog(mousePoint);
                     }
                     if (placedEntity != null) {
                         ImageView entityImgView = placedEntity.getImgView();
@@ -340,7 +342,7 @@ public class GameView extends View {
                         }
 
                         Entity finalPlacedEntity = placedEntity;
-                        entityImgView.setOnMouseClicked(e -> onEntityClicked(e, finalPlacedEntity));
+                        entityImgView.setOnMouseClicked(e -> onEntityClicked(finalPlacedEntity));
                     }
                 } else {
                     Label message = GameLogic.createErrorPopup("something is already placed here");
@@ -351,21 +353,9 @@ public class GameView extends View {
             event.consume();
         });
     }
-
-    private void printTileLocations() {
-        System.out.println("Tile locations: ");
-        for (Entity entity : gameGrid.getPlacedTiles()) {
-            System.out.println("\tx: " + entity.getPoint().getX() + "\ty: " + entity.getPoint().getY());
-        }
-    }
     private void addFirstTileToMainPane() {
-        // TODO: remove & uncomment below (testing)
-        for (Entity entity : gameGrid.getPlacedTiles()) {
-            entity.getImgView().setOnMouseClicked(e -> onEntityClicked(e, entity));
-            super.addToMainPane(entity.getImgView());
-        }
-//        ImageView firstTile = gameGrid.getPlacedTiles().get(0).getImgView();
-//        super.addToMainPane(firstTile);
+        ImageView firstTile = gameGrid.getPlacedTiles().get(0).getImgView();
+        super.addToMainPane(firstTile);
     }
     private boolean isGridEmpty(final Point point) {
         int pointX = point.getX();
@@ -403,7 +393,7 @@ public class GameView extends View {
         }
         e.consume();
     }
-    private void onEntityClicked(final MouseEvent e, final Entity entity) {
+    private void onEntityClicked(final Entity entity) {
         Point firstTile = gameGrid.getPlacedTiles().get(0).getPoint();
 
         if (player.isSelling() && entity.getPoint() != firstTile && !player.isPlaying()) {

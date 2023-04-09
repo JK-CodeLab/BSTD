@@ -23,14 +23,13 @@ public class View {
     private static final int HEIGHT = 832;
     private static final int WIDTH = 1280;
     private final AnchorPane mainPane;
-    private final Scene mainScene;
     private final Stage mainStage;
     /**
      * Constructor for View.
      */
     public View() {
         mainPane = new AnchorPane();
-        mainScene = new Scene(mainPane, WIDTH, HEIGHT);
+        Scene mainScene = new Scene(mainPane, WIDTH, HEIGHT);
         mainStage = new Stage();
         mainStage.setScene(mainScene);
 
