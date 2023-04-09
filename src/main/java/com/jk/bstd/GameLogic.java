@@ -8,8 +8,6 @@ import com.jk.bstd.entities.Entity;
 import com.jk.bstd.entities.Animal;
 import com.jk.bstd.ui.GameGrid;
 import com.jk.bstd.ui.MainMenuView;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -32,8 +30,6 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 
-
-//TODO: remove, just for test
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
 import javafx.animation.PathTransition;
@@ -157,19 +153,12 @@ public final class GameLogic {
         timeline.getKeyFrames().add(keyFrame);
         timeline.setCycleCount(numEnemies);
         timeline.play();
-        timeline.statusProperty().addListener(new ChangeListener<Animation.Status>() {
-            @Override
-            public void changed(final ObservableValue<? extends Animation.Status> observableValue,
-                                final Animation.Status status,
-                                final Animation.Status t1) {
-                if (t1 == Animation.Status.STOPPED) {
-                    player.setPlaying(false);
-                }
+        timeline.statusProperty().addListener((observableValue, status, t1) -> {
+            if (t1 == Animation.Status.STOPPED) {
+                player.setPlaying(false);
             }
         });
-        timeline.setOnFinished(event -> {
-            player.setPlaying(false);
-        });
+        timeline.setOnFinished(event -> player.setPlaying(false));
     }
     private static void spawnEnemy(final AnchorPane pane,
                                    final Path path,
@@ -177,7 +166,6 @@ public final class GameLogic {
                                    final ArrayList<Tower> towers,
                                    final Player player) {
         PathTransition pt = new PathTransition(Duration.seconds(path.getElements().size()), path);
-//        PathTransition pt = new PathTransition(Duration.seconds(2), path); // TODO: remove (for faster testing)
 
         ImageView imgView = animal.getImgView();
         pt.setNode(imgView);
@@ -215,15 +203,10 @@ public final class GameLogic {
                 }
             }
         });
-        pt.statusProperty().addListener(new ChangeListener<Animation.Status>() {
-            @Override
-            public void changed(final ObservableValue<? extends Animation.Status> observableValue,
-                                final Animation.Status status,
-                                final Animation.Status t1) {
-                if (t1 == Animation.Status.STOPPED && !animal.getIsDead() && player.isAlive()) {
-                    pane.getChildren().remove(imgView);
-                    player.takeDamage(animal.getAttack());
-                }
+        pt.statusProperty().addListener((observableValue, status, t1) -> {
+            if (t1 == Animation.Status.STOPPED && !animal.getIsDead() && player.isAlive()) {
+                pane.getChildren().remove(imgView);
+                player.takeDamage(animal.getAttack());
             }
         });
         pt.play();
@@ -310,6 +293,19 @@ public final class GameLogic {
         return (x == otherX && (y == otherY + 1 || y == otherY - 1))
                 || (y == otherY && (x == otherX + 1 || x == otherX - 1));
     }
+    private static void  createFadeIn(final Label label) {
+        FadeTransition fadeIn = new FadeTransition(FADE_IN_DURATION, label);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+        fadeIn.play();
+    }
+    private static void createFadeOut(final Label label) {
+        FadeTransition fadeOut = new FadeTransition(FADE_OUT_DURATION, label);
+        fadeOut.setFromValue(1);
+        fadeOut.setToValue(0);
+        fadeOut.setDelay(FADE_OUT_DELAY);
+        fadeOut.play();
+    }
     /**
      * Creates an error popup with the given text.
      *
@@ -342,19 +338,16 @@ public final class GameLogic {
         label.setPadding(new Insets(LABEL_PADDING_TOP, LABEL_PADDING_RIGHT, LABEL_PADDING_BOTTOM, LABEL_PADDING_LEFT));
         label.setWrapText(true);
         label.setAlignment(Pos.CENTER_LEFT);
-
-        FadeTransition fadeIn = new FadeTransition(FADE_IN_DURATION, label);
-        fadeIn.setFromValue(0);
-        fadeIn.setToValue(1);
-        fadeIn.play();
-
-        FadeTransition fadeOut = new FadeTransition(FADE_OUT_DURATION, label);
-        fadeOut.setFromValue(1);
-        fadeOut.setToValue(0);
-        fadeOut.setDelay(FADE_OUT_DELAY);
-        fadeOut.play();
-
+        createFadeIn(label);
+        createFadeOut(label);
         return label;
+    }
+    private static Button createCloseButton() {
+        Button btn = new Button();
+        btn.setPrefSize(CLOSE_BTN_SIZE, CLOSE_BTN_SIZE);
+        btn.setTranslateX(CLOSE_BTN_X);
+        btn.setTranslateY(CLOSE_BTN_Y);
+        return btn;
     }
     /**
      * Creates a button with the given name.
@@ -369,10 +362,7 @@ public final class GameLogic {
             btnBg = new Image(Objects.requireNonNull(
                     GameLogic.class.getResource("/images/gameButtons/closeBtn.png")).toExternalForm()
             );
-            btn = new Button();
-            btn.setPrefSize(CLOSE_BTN_SIZE, CLOSE_BTN_SIZE);
-            btn.setTranslateX(CLOSE_BTN_X);
-            btn.setTranslateY(CLOSE_BTN_Y);
+            btn = createCloseButton();
         } else {
             btnBg = new Image(Objects.requireNonNull(
                     GameLogic.class.getResource("/images/gameButtons/btnBg.png")).toExternalForm()
@@ -435,15 +425,13 @@ public final class GameLogic {
         layout.setBackground(new Background(bg));
         layout.getChildren().addAll(returnBtn, quitBtn);
         layout.setAlignment(Pos.CENTER);
-
+        showPopUp(popupWindow, gameWindow, layout);
+    }
+    private static void showPopUp(final Stage popupWindow, final Window gameWindow, final VBox layout) {
         Scene scene = new Scene(layout, SCENE_WIDTH, SCENE_HEIGHT);
         scene.setFill(Color.TRANSPARENT);
-
-        // set the location of the popup window to the center of the game window
         popupWindow.setX(gameWindow.getX() + (gameWindow.getWidth() / 2) - (SCENE_WIDTH / 2.0));
         popupWindow.setY(gameWindow.getY() + (gameWindow.getHeight() / 2) - (SCENE_HEIGHT / 2.0));
-
-
         popupWindow.setScene(scene);
         popupWindow.show();
     }

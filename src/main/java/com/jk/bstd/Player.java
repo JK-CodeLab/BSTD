@@ -76,16 +76,6 @@ public class Player {
     }
 
     /**
-     * Sets the player's money to the given amount.
-     *
-     * @param money the amount of money the player has
-     */
-    public void setMoney(final int money) {
-        this.money = money;
-        updateStats();
-    }
-
-    /**
      * Adds money to the player's current amount.
      *
      * @param moneyToAdd the amount of money to add
@@ -154,17 +144,6 @@ public class Player {
     public boolean isAlive() {
         return isAlive;
     }
-
-    /**
-     * Sets the player's alive status to the given boolean.
-     *
-     * @param alive true if the player is alive, false otherwise
-     */
-    public void setAlive(final boolean alive) {
-        isAlive = alive;
-        updateStats();
-    }
-
     /**
      * Returns whether the player is in selling mode or not.
      *

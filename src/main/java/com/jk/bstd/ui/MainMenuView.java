@@ -30,7 +30,7 @@ public class MainMenuView {
     private static final int BUTTON_SIZE_MODIFIER = 100;
     private final AnchorPane mainPane;
     private final Stage mainStage;
-    private List<MainMenuButton> menuButtons;
+    private final List<MainMenuButton> menuButtons;
 
     /**
      * Constructor for MainMenuView.
