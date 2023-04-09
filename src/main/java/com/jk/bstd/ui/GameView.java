@@ -3,21 +3,28 @@ package com.jk.bstd.ui;
 import com.jk.bstd.Player;
 import com.jk.bstd.components.GameMenuButton;
 import com.jk.bstd.components.ShopButton;
-import com.jk.bstd.entities.*;
+import com.jk.bstd.entities.Point;
+import com.jk.bstd.entities.Tile;
+import com.jk.bstd.entities.Entity;
+import com.jk.bstd.entities.Sprinkler;
+import com.jk.bstd.entities.Farmer;
+import com.jk.bstd.entities.Scarecrow;
+import com.jk.bstd.entities.Dog;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -29,25 +36,49 @@ import java.util.Objects;
 import com.jk.bstd.GameLogic;
 import javafx.stage.StageStyle;
 import org.json.simple.JSONObject;
-import static com.jk.bstd.LoadGame.*;
-import static com.jk.bstd.SaveGame.*;
-
-
+import static com.jk.bstd.LoadGame.readSave;
+import static com.jk.bstd.LoadGame.loadPlayer;
+import static com.jk.bstd.LoadGame.loadTowers;
+import static com.jk.bstd.LoadGame.loadTiles;
+import static com.jk.bstd.SaveGame.saveGame;
+/**
+ * A class to represent the game view of the game.
+ *
+ * @author Joseph Chun, Kira Yoon
+ * @version 1.0
+ */
 public class GameView extends View {
-
+    private static final int SHOP_BTN_START_X = 1018;
+    private static final int SHOP_BTN_START_Y = 128;
+    private static final int PLAYER_STATS_X = 305;
+    private static final int PLAYER_STATS_Y = 0;
+    private static final int SHOP_VIEW_X = 970;
+    private static final int SHOP_VIEW_Y = 60;
+    private static final int SHOP_BUTTON_SIZE_MODIFIER = 126;
+    private static final int MENU_BUTTON_X = 350;
+    private static final int MENU_BUTTON_SIZE_MODIFIER = 130;
+    private static final int MENU_BUTTON_Y = 105;
+    private static final int TILE_X = 12;
+    private static final int LAYOUT_VBOX = 5;
+    private static final int SCENE_X = 320;
+    private static final int SCENE_Y = 256;
+    private static final int MOUSE_OFFSET = 64;
+    private static final int Y_OFFSET = 4;
     private Player player;
     private Stage gameStage;
-    private GameGrid gameGrid = new GameGrid();
-    private GridPane gridPane = gameGrid.getGridPane();
-    private List<ShopButton> shopButtons;
-    private Label moneyLabel;
-    private Label healthLabel;
-    private Label levelLabel;
+    private final GameGrid gameGrid = new GameGrid();
+    private final GridPane gridPane = gameGrid.getGridPane();
+    private final List<ShopButton> shopButtons;
+    private final Label moneyLabel;
+    private final Label healthLabel;
+    private final Label levelLabel;
     private final List<String> gameMenuButtons = Arrays.asList("menuBtn", "playBtn", "sellBtn");
-    private final int SHOP_BTN_START_X = 1018;
-    private final int SHOP_BTN_START_Y = 128;
-
-    public GameView(boolean loadGame) {
+    /**
+     * Creates a new game view.
+     *
+     * @param loadGame whether to load a game or not
+     */
+    public GameView(final boolean loadGame) {
         super();
         shopButtons = new ArrayList<>();
 
@@ -78,54 +109,74 @@ public class GameView extends View {
         levelLabel = player.createStatsLabel("level");
         displayPlayerStats();
     }
-
-    public void createNewGame(Stage mainMenu) {
+    /**
+     * Creates a new game.
+     *
+     * @param mainMenu the main menu stage
+     */
+    public void createNewGame(final Stage mainMenu) {
         mainMenu.hide();
         gameStage = super.getMainStage();
         gameStage.show();
     }
-
-    /// TODO: Implement this method
-    public void loadGame(Stage mainMenu) {
-        mainMenu.hide();
-        super.getMainStage().show();
-    }
-
+    /**
+     * Exits the game.
+     */
     public void exitGame() {
         gameStage.close();
     }
-
+    /**
+     * Saves the game.
+     */
     private void addGridPaneToMainPane() {
         super.addToMainPane(gridPane);
     }
-
+    /**
+     * Initializes the game grid.
+     */
     private void displayPlayerStats() {
-        Image statsBg = new Image(Objects.requireNonNull(getClass().getResource("/images/gameScreen/playerStatsBg.png")).toExternalForm());
+        Image statsBg = new Image(
+                Objects.requireNonNull(
+                        getClass().getResource("/images/gameScreen/playerStatsBg.png")
+                ).toExternalForm()
+        );
         ImageView statsBgView = new ImageView(statsBg);
-        statsBgView.setX(305);
-        statsBgView.setY(0);
+        statsBgView.setX(PLAYER_STATS_X);
+        statsBgView.setY(PLAYER_STATS_Y);
 
         super.addToMainPane(statsBgView, moneyLabel, healthLabel, levelLabel);
     }
-
+    /**
+     * Creates the shop.
+     */
     public void createShop() {
-        Image shopImg = new Image(Objects.requireNonNull(getClass().getResource("/images/gameScreen/shopBg.png")).toExternalForm());
+        Image shopImg = new Image(
+                Objects.requireNonNull(
+                        getClass().getResource("/images/gameScreen/shopBg.png")
+                ).toExternalForm()
+        );
         ImageView shopView = new ImageView(shopImg);
-        shopView.setX(970);
-        shopView.setY(60);
+        shopView.setX(SHOP_VIEW_X);
+        shopView.setY(SHOP_VIEW_Y);
         super.addToMainPane(shopView);
 
         createShopButtons();
     }
-
-    public void addShopButtons(ShopButton shopBtn) {
+    /**
+     * Adds a shop button to the shop.
+     *
+     * @param shopBtn the shop button to add
+     */
+    public void addShopButtons(final ShopButton shopBtn) {
         shopBtn.setLayoutX(SHOP_BTN_START_X);
-        shopBtn.setLayoutY(SHOP_BTN_START_Y + shopButtons.size() * 126);
+        shopBtn.setLayoutY(SHOP_BTN_START_Y + shopButtons.size() * SHOP_BUTTON_SIZE_MODIFIER);
 
         shopButtons.add(shopBtn);
         super.addToMainPane(shopBtn);
     }
-
+    /**
+     * Creates the shop buttons.
+     */
     public void createShopButtons() {
         ShopButton shopPath = new ShopButton("shopTile");
         ShopButton shopSprinkler = new ShopButton("shopSprinkler");
@@ -143,20 +194,18 @@ public class GameView extends View {
         addShopButtons(shopFarmer);
     }
 
-    private void createMenuButtons(String btnName, int offsetX) {
+    private void createMenuButtons(final String btnName, final int offsetX) {
         GameMenuButton menuBtn = new GameMenuButton(btnName);
-        menuBtn.setLayoutX(350 + offsetX * 130);
-        menuBtn.setLayoutY(105);
+        menuBtn.setLayoutX(MENU_BUTTON_X + offsetX * MENU_BUTTON_SIZE_MODIFIER);
+        menuBtn.setLayoutY(MENU_BUTTON_Y);
         super.addToMainPane(menuBtn);
 
         switch (btnName) {
-            case "menuBtn" -> menuBtn.setOnMouseClicked(event -> {
-                createMenuPopup();
-            });
+            case "menuBtn" -> menuBtn.setOnMouseClicked(event -> createMenuPopup());
             case "playBtn" -> menuBtn.setOnMouseClicked(event -> {
 
                 boolean tilesConnected = GameLogic.checkIfTilesAreConnected(gameGrid.getPlacedTiles());
-                boolean lastTileCorrect = GameLogic.checkLastTilePosition(gameGrid.getPlacedTiles(), 12, 0);
+                boolean lastTileCorrect = GameLogic.checkLastTilePosition(gameGrid.getPlacedTiles(), TILE_X, 0);
 
                 if (!player.isAlive()) {
                     Label message = GameLogic.createErrorPopup("You are dead");
@@ -189,9 +238,10 @@ public class GameView extends View {
                     super.addToMainPane(message);
                 }
             });
+            default -> {
+            }
         }
     }
-
     private void createMenuPopup() {
         Stage popupWindow = new Stage();
 
@@ -233,13 +283,12 @@ public class GameView extends View {
                 getClass().getResource("/images/gameButtons/menuPopupBg.png")).toExternalForm());
         BackgroundImage bg = new BackgroundImage(
                 bgImg, null, null, null, null);
-
-        VBox layout = new VBox(5);
+        VBox layout = new VBox(LAYOUT_VBOX);
         layout.setBackground(new Background(bg));
         layout.getChildren().addAll(close, saveBtn, returnBtn, quitGame);
         layout.setAlignment(Pos.TOP_CENTER);
 
-        Scene scene = new Scene(layout, 320, 256);
+        Scene scene = new Scene(layout, SCENE_X, SCENE_Y);
         scene.setFill(Color.TRANSPARENT);
 
         popupWindow.setScene(scene);
@@ -248,7 +297,6 @@ public class GameView extends View {
 
     private void initializeGameGrid() {
         gridPane.setOnDragOver(this::acceptCopy);
-
         gridPane.setOnDragDropped(event -> {
             if (event.getGestureSource() instanceof ShopButton) {
                 String item = event.getDragboard().getString();
@@ -258,25 +306,19 @@ public class GameView extends View {
 
                 Entity placedEntity = null;
                 if (isEmpty) {
-                    switch (item) {
-                        case "Tile" -> {;
-                            boolean isAdjacent = isAdjacent(mousePoint);
-                            if (isAdjacent) {
-                                placedEntity = new Tile(mousePoint);
-                            }
+                    if (item.equals("Tile")) {
+                        boolean isAdjacent = isAdjacent(mousePoint);
+                        if (isAdjacent) {
+                            placedEntity = new Tile(mousePoint);
                         }
-                        case "Sprinkler" -> {
-                            placedEntity = new Sprinkler(mousePoint);
-                        }
-                        case "Scarecrow" -> {
-                            placedEntity = new Scarecrow(mousePoint);
-                        }
-                        case "Farmer" -> {
-                            placedEntity = new Farmer(mousePoint);
-                        }
-                        case "Dog" -> {
-                            placedEntity = new Dog(mousePoint);
-                        }
+                    } else if (item.equals("Sprinkler")) {
+                        placedEntity = new Sprinkler(mousePoint);
+                    } else if (item.equals("Scarecrow")) {
+                        placedEntity = new Scarecrow(mousePoint);
+                    } else if (item.equals("Farmer")) {
+                        placedEntity = new Farmer(mousePoint);
+                    } else if (item.equals("Dog")) {
+                        placedEntity = new Dog(mousePoint);
                     }
                     if (placedEntity != null) {
                         ImageView entityImgView = placedEntity.getImgView();
@@ -298,9 +340,6 @@ public class GameView extends View {
             }
             event.setDropCompleted(true);
             event.consume();
-
-            // TODO: Remove this (debugging)
-//            printTileLocations();
         });
     }
 
@@ -310,7 +349,6 @@ public class GameView extends View {
             System.out.println("\tx: " + entity.getPoint().getX() + "\ty: " + entity.getPoint().getY());
         }
     }
-
     private void addFirstTileToMainPane() {
         // TODO: remove & uncomment below (testing)
         for (Entity entity : gameGrid.getPlacedTiles()) {
@@ -320,8 +358,7 @@ public class GameView extends View {
 //        ImageView firstTile = gameGrid.getPlacedTiles().get(0).getImgView();
 //        super.addToMainPane(firstTile);
     }
-
-    private boolean isGridEmpty(Point point) {
+    private boolean isGridEmpty(final Point point) {
         int pointX = point.getX();
         int pointY = point.getY();
         for (Entity entity : gameGrid.getPlacedTiles()) {
@@ -336,8 +373,7 @@ public class GameView extends View {
         }
         return true;
     }
-
-    private boolean isAdjacent(Point currentPosition) {
+    private boolean isAdjacent(final Point currentPosition) {
         int indexLastTile = gameGrid.getPlacedTiles().size() - 1;
         Point lastPoint = gameGrid.getPlacedTiles().get(indexLastTile).getPoint();
 
@@ -352,15 +388,13 @@ public class GameView extends View {
         }
         return currY == lastPointY && (currX == lastPointX + 1 || currX == lastPointX - 1);
     }
-
-    private void acceptCopy(DragEvent e) {
+    private void acceptCopy(final DragEvent e) {
         if (e.getDragboard().hasString()) {
             e.acceptTransferModes(TransferMode.COPY);
         }
         e.consume();
     }
-
-    private void onEntityClicked(MouseEvent e, Entity entity) {
+    private void onEntityClicked(final MouseEvent e, final Entity entity) {
         if (player.isSelling()) {
             System.out.println("entity sold: " + entity.getName());
             gameGrid.removeEntity(entity);
@@ -369,29 +403,26 @@ public class GameView extends View {
             GameLogic.sellEntity(entity, player);
         }
     }
-
-    private Point getPointFromMousePosition(DragEvent e) {
+    private Point getPointFromMousePosition(final DragEvent e) {
         // current mouse position
         double mouseX = e.getSceneX();
         double mouseY = e.getSceneY();
 
         // round down to nearest 64 (grid size) to get the top left corner of the grid
-        int x = (int) (mouseX - (mouseX % 64));
-        int y = (int) (mouseY - (mouseY % 64));
+        int x = (int) (mouseX - (mouseX % MOUSE_OFFSET));
+        int y = (int) (mouseY - (mouseY % MOUSE_OFFSET));
 
         // get the row and column of the grid
-        int pointX = x/64 - 1;
-        int pointY = y/64 - 4;
+        int pointX = x / MOUSE_OFFSET - 1;
+        int pointY = y / MOUSE_OFFSET - Y_OFFSET;
 
         return new Point(pointX, pointY);
     }
-
     private void drawTiles() {
         for (Entity entity : gameGrid.getPlacedTiles()) {
             super.addToMainPane(entity.getImgView());
         }
     }
-
     private void drawTowers() {
         for (Entity entity : gameGrid.getPlacedTowers()) {
             super.addToMainPane(entity.getImgView());

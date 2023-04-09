@@ -9,4 +9,5 @@ module com.jk.bstd {
     exports com.jk.bstd;
     exports com.jk.bstd.entities;
     exports com.jk.bstd.ui;
+    exports com.jk.bstd.components;
 }
