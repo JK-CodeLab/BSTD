@@ -5,22 +5,34 @@ import javafx.application.Application;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+/**
+ * Main class that starts the game.
+ *
+ * @author Joseph Chun, Kira Yoon
+ * @version 1.0
+ */
 public class Main extends Application {
+    private static final int DEFAULT_FONT_SIZE = 24;
+    /**
+     * Starts the game.
+     *
+     * @param stage the stage to start the game on
+     */
     @Override
     public void start(Stage stage) {
-        Font.loadFont(getClass().getResourceAsStream("/fonts/munro.ttf"), 24);
-        Font.loadFont(getClass().getResourceAsStream("/fonts/dogicapixel.ttf"), 24);
-
-        try {
-            MainMenuView mainMenuView = new MainMenuView();
-            stage = mainMenuView.getMainStage();
-            stage.show();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        Font.loadFont(getClass().getResourceAsStream("/fonts/munro.ttf"), DEFAULT_FONT_SIZE);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/dogicapixel.ttf"), DEFAULT_FONT_SIZE);
+        MainMenuView mainMenuView = new MainMenuView();
+        stage = mainMenuView.getMainStage();
+        stage.show();
     }
 
-    public static void main(String[] args) {
+    /**
+     * Main method that launches the game.
+     *
+     * @param args the arguments passed in
+     */
+    public static void main(final String[] args) {
         launch();
     }
 }
