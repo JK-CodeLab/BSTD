@@ -108,9 +108,7 @@ public class MainMenuView {
             }
         });
 
-        exit.setOnAction(event -> {
-            mainStage.close();
-        });
+        exit.setOnAction(event -> mainStage.close());
     }
 
     private void createBackground() {
