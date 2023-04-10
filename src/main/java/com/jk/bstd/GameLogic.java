@@ -45,6 +45,7 @@ import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This class is used to create game logic functions.
@@ -172,19 +173,6 @@ public final class GameLogic {
         pt.setRate(1);
         pt.setInterpolator(Interpolator.LINEAR);
 
-        Image chickenRight = new Image(
-                Objects.requireNonNull(
-                        GameLogic.class.getResource("/images/entities/ChickenRight.png")).toExternalForm());
-        Image chickenLeft = new Image(
-                Objects.requireNonNull(
-                        GameLogic.class.getResource("/images/entities/ChickenLeft.png")).toExternalForm());
-        Image chickenUp = new Image(
-                Objects.requireNonNull(
-                        GameLogic.class.getResource("/images/entities/ChickenUp.png")).toExternalForm());
-        Image chickenDown = new Image(
-                Objects.requireNonNull(
-                        GameLogic.class.getResource("/images/entities/ChickenDown.png")).toExternalForm());
-
         imgView.setTranslateX(ENEMY_SPAWN_OFFSET_X);
         imgView.setTranslateY(ENEMY_SPAWN_OFFSET_Y);
         pane.getChildren().add(imgView);
@@ -195,23 +183,14 @@ public final class GameLogic {
                     imgView.getTranslateX() + STARTING_X_OFFSET,
                     imgView.getTranslateY() + STARTING_Y_OFFSET
             );
-
-            if (enemyLocation.getX() > enemyCurrentLocation[0].getX()) {
-                imgView.setImage(chickenRight);
-            } else if (enemyLocation.getX() < enemyCurrentLocation[0].getX()) {
-                imgView.setImage(chickenLeft);
-            } else if (enemyLocation.getY() > enemyCurrentLocation[0].getY()) {
-                imgView.setImage(chickenDown);
-            } else if (enemyLocation.getY() < enemyCurrentLocation[0].getY()) {
-                imgView.setImage(chickenUp);
-            }
+            imgView.setImage(animal.getImg(enemyCurrentLocation[0], enemyLocation));
             enemyCurrentLocation[0] = enemyLocation;
 
             for (Tower tower : towers) {
-                int towerX = tower.getPoint().getRealX() + STARTING_X_OFFSET;
-                int towerY = tower.getPoint().getRealY() + STARTING_Y_OFFSET;
-                Point2D towerLocation = new Point2D(towerX, towerY);
-                if (enemyCurrentLocation[0].distance(towerLocation) < tower.getRange()  * Y_OFFSET &&  !tower.getHasTarget()) {
+//                int towerX = tower.getPoint().getRealX() + STARTING_X_OFFSET;
+//                int towerY = tower.getPoint().getRealY() + STARTING_Y_OFFSET;
+//                Point2D towerLocation = new Point2D(towerX, towerY);
+                if (enemyCurrentLocation[0].distance(tower.getPoint().toPoint2D()) < tower.getRange()  * Y_OFFSET &&  !tower.getHasTarget()) {
                     tower.setHasTarget(true);
                     tower.attackAnimation(enemyCurrentLocation[0], pane);
                     animal.takeDamage(tower.getAttack());

@@ -1,4 +1,7 @@
 package com.jk.bstd.entities;
+
+import javafx.geometry.Point2D;
+
 /**
  * A point class to represent the location of each object.
  *
@@ -65,6 +68,12 @@ public class Point {
      *
      * @return the string representation of the point
      */
+
+    public Point2D toPoint2D() {
+        int centerX = getRealX() + OFFSET / 2;
+        int centerY = getRealY() + OFFSET / 2;
+        return new Point2D(centerX, centerY);
+    }
     @Override
     public String toString() {
         return "Point{"

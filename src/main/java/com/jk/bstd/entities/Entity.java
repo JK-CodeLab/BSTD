@@ -29,7 +29,7 @@ public class Entity {
         this.name = this.getClass().getSimpleName();
         Image img = new Image(
                 Objects.requireNonNull(
-                        this.getClass().getResource("/images/gameScreen/" + this.name + ".png")
+                        this.getClass().getResource("/images/entities/" + this.name + ".png")
                 ).toExternalForm()
         );
         this.imgView = new ImageView(img);

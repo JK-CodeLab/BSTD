@@ -227,7 +227,6 @@ public class GameView extends View {
                 determineMessage(tilesConnected, lastTileCorrect);
             });
             case "sellBtn" -> menuBtn.setOnMouseClicked(event -> {
-                System.out.println("selling" + player.isSelling());
                 if (!player.isPlaying() && !player.isSelling()) {
                     menuBtn.setButtonPressedStyle();
                     player.setSelling(true);

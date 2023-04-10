@@ -54,7 +54,7 @@ public class ShopButton extends Button {
                 ).toExternalForm()
         );
         itemImg = new Image(
-                Objects.requireNonNull(getClass().getResource("/images/gameScreen/" + itemName + ".png")
+                Objects.requireNonNull(getClass().getResource("/images/entities/" + itemName + ".png")
                 ).toExternalForm()
         );
     }

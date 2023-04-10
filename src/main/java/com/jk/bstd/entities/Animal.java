@@ -1,15 +1,20 @@
 package com.jk.bstd.entities;
+
+import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
+
 /**
  * An animal class for the enemies.
  *
  * @author Joseph Chun, Kira Yoon
  * @version 1.0
  */
-public class Animal extends Entity {
+public abstract class Animal extends Entity {
     private int health;
     private final int attack;
     private final int goldDropped;
     private Boolean isDead = false;
+
     /**
      * Constructor for Animal.
      *
@@ -23,6 +28,9 @@ public class Animal extends Entity {
         this.attack = attack;
         this.goldDropped = goldDropped;
     }
+
+    public abstract Image getImg(Point2D currPoint, Point2D nextPoint);
+
     /**
      * Reduce the health of the animal by the damage.
      * If the health is less than or equal to 0, the animal is dead.
@@ -35,6 +43,7 @@ public class Animal extends Entity {
             this.isDead = true;
         }
     }
+
     /**
      * Returns the health of the animal.
      *
@@ -52,6 +61,7 @@ public class Animal extends Entity {
     public int getGoldDropped() {
         return goldDropped;
     }
+
     /**
      * Returns the attack of the animal.
      *
