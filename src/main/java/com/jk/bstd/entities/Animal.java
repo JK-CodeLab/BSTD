@@ -29,6 +29,13 @@ public abstract class Animal extends Entity {
         this.goldDropped = goldDropped;
     }
 
+    /**
+     * Returns an image of the animal.
+     *
+     * @param currPoint the current point of the animal
+     * @param nextPoint the next point of the animal
+     * @return image of the animal
+     */
     public abstract Image getImg(Point2D currPoint, Point2D nextPoint);
 
     /**

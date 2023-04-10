@@ -1,6 +1,5 @@
 package com.jk.bstd.entities;
 
-import com.jk.bstd.GameLogic;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -46,7 +45,7 @@ public class Chicken extends Animal {
      * @param nextPoint the next point of the chicken
      * @return image of the chicken
      */
-    public Image getImg(Point2D currPoint, Point2D nextPoint) {
+    public Image getImg(final Point2D currPoint, final Point2D nextPoint) {
         if (currPoint.getX() < nextPoint.getX()) {
             return chickenRight;
         } else if (currPoint.getX() > nextPoint.getX()) {

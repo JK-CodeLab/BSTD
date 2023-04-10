@@ -187,10 +187,8 @@ public final class GameLogic {
             enemyCurrentLocation[0] = enemyLocation;
 
             for (Tower tower : towers) {
-//                int towerX = tower.getPoint().getRealX() + STARTING_X_OFFSET;
-//                int towerY = tower.getPoint().getRealY() + STARTING_Y_OFFSET;
-//                Point2D towerLocation = new Point2D(towerX, towerY);
-                if (enemyCurrentLocation[0].distance(tower.getPoint().toPoint2D()) < tower.getRange()  * Y_OFFSET &&  !tower.getHasTarget()) {
+                if (enemyCurrentLocation[0].distance(tower.getPoint().toPoint2D())
+                        < tower.getRange()  * Y_OFFSET &&  !tower.getHasTarget()) {
                     tower.setHasTarget(true);
                     tower.attackAnimation(enemyCurrentLocation[0], pane);
                     animal.takeDamage(tower.getAttack());
@@ -321,14 +319,11 @@ public final class GameLogic {
     public static Label createErrorPopup(final String text) {
         Image img;
         if (text.equals("game saved")) {
-            img = new Image(Objects.requireNonNull(
-                    GameLogic.class.getResource(SAVED_POPUP_BG_PATH))
+            img = new Image(Objects.requireNonNull(GameLogic.class.getResource(SAVED_POPUP_BG_PATH))
                     .toExternalForm());
         } else {
-            img = new Image(Objects.requireNonNull(
-                    GameLogic.class.getResource(ERROR_POPUP_BG_PATH)
-                    ).toExternalForm()
-            );
+            img = new Image(Objects.requireNonNull(GameLogic.class.getResource(ERROR_POPUP_BG_PATH)
+                    ).toExternalForm());
         }
         BackgroundImage backgroundImage = new BackgroundImage(
                 img,

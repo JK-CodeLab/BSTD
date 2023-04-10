@@ -4,6 +4,8 @@ import javafx.geometry.Point2D;
 
 /**
  * A point class to represent the location of each object.
+ * The x and y coordinates are in respect to the game grid, and not the actual
+ * pixel location.
  *
  * @author Joseph Chun, Kira Yoon
  * @version 1.0
@@ -63,17 +65,26 @@ public class Point {
     public int getRealY() {
         return (y + OFFSET_Y) * OFFSET;
     }
-    /**
-     * Returns the string representation of the point.
-     *
-     * @return the string representation of the point
-     */
 
+    /**
+     * Returns the point as a Point2D.
+     * Because the Point class is used to represent the location of an object
+     * in respect to the game grid, the Point2D class is used to represent
+     * the location of an object in respect to the game window.
+     *
+     * @return the point as a Point2D
+     */
     public Point2D toPoint2D() {
         int centerX = getRealX() + OFFSET / 2;
         int centerY = getRealY() + OFFSET / 2;
         return new Point2D(centerX, centerY);
     }
+
+    /**
+     * Returns the string representation of the point.
+     *
+     * @return the string representation of the point
+     */
     @Override
     public String toString() {
         return "Point{"

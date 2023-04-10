@@ -5,11 +5,14 @@
     <scanScope>JavaOnly</scanScope>
     <copyLibs>true</copyLibs>
     <option name="thirdPartyClasspath" />
-    <option name="activeLocationIds" />
+    <option name="activeLocationIds">
+      <option value="fdbc12b0-9736-441e-b3ad-230dd33497e6" />
+    </option>
     <option name="locations">
       <list>
         <ConfigurationLocation id="bundled-sun-checks" type="BUNDLED" scope="All" description="Sun Checks">(bundled)</ConfigurationLocation>
         <ConfigurationLocation id="bundled-google-checks" type="BUNDLED" scope="All" description="Google Checks">(bundled)</ConfigurationLocation>
+        <ConfigurationLocation id="fdbc12b0-9736-441e-b3ad-230dd33497e6" type="LOCAL_FILE" scope="All" description="comp2522-checkstyle">$USER_HOME$/OneDrive/Documents/BCIT/1SEM 2/COMP 2522/COMP-2522-Checkstyle.xml</ConfigurationLocation>
       </list>
     </option>
   </component>

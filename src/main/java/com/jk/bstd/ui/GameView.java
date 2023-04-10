@@ -441,11 +441,13 @@ public class GameView extends View {
     private void drawTiles() {
         for (Entity entity : gameGrid.getPlacedTiles()) {
             super.addToMainPane(entity.getImgView());
+            entity.getImgView().setOnMouseClicked(e -> onEntityClicked(entity));
         }
     }
     private void drawTowers() {
         for (Entity entity : gameGrid.getPlacedTowers()) {
             super.addToMainPane(entity.getImgView());
+            entity.getImgView().setOnMouseClicked(e -> onEntityClicked(entity));
         }
     }
 }
