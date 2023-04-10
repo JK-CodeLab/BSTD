@@ -41,3 +41,4 @@ Some exciting features are planned for the future:
 - Larger game board
 
 ## Gameplay
+Short video demo of gameplay mechanics: https://youtu.be/O9sdlq6P7a8
