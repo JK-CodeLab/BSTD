@@ -80,7 +80,7 @@ public final class LoadGame {
             JSONObject towerObj = (JSONObject) tower;
             String name = (String) towerObj.get("name");
             Tower placedTower = null;
-            Point towerPoint = new Point(((Long) towerObj.get("y")).intValue(), ((Long) towerObj.get("x")).intValue());
+            Point towerPoint = new Point(((Long) towerObj.get("x")).intValue(), ((Long) towerObj.get("y")).intValue());
             switch (name) {
                 case "Sprinkler" -> {
                     placedTower = new Sprinkler(towerPoint);
