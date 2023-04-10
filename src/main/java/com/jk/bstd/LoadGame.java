@@ -36,9 +36,7 @@ public final class LoadGame {
         JSONParser parser = new JSONParser();
         try {
             FileReader reader = new FileReader("src/main/resources/save.json");
-            JSONObject obj = (JSONObject) parser.parse(reader);
-            System.out.println(obj);
-            return obj;
+            return (JSONObject) parser.parse(reader);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
