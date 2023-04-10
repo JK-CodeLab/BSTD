@@ -5,9 +5,10 @@
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Overview](#overview)
-3. [Controls](#controls)
-4. [Future Plans](#future-plans)
-5. [Gameplay](#gameplay)
+3. [Running the Game](#running-the-game)
+4. [Controls](#controls)
+5. [Future Plans](#future-plans)
+6. [Gameplay](#gameplay)
 
 ## Introduction
 The year is 2024. Barn animals have been bred, and kept captive for many years.
@@ -16,6 +17,10 @@ The animals have had enough, and have decided to revolt.
 Their first target: your farm. You must defend your farm and protect it from the animals.
 Set a path for the animals to travel on, place your towers, and defeat the endless waves of animals.
 Good Luck!
+
+## Running the Game
+1. Download the game files
+2. Run the BSTD.jar file 
 
 ## Overview
 This is a tower defense game. The goal is to defeat all the enemies before they reach the end of the path. 
@@ -41,3 +46,4 @@ Some exciting features are planned for the future:
 - Larger game board
 
 ## Gameplay
+Short video demo of gameplay mechanics: https://youtu.be/O9sdlq6P7a8
