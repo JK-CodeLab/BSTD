@@ -45,7 +45,6 @@ import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This class is used to create game logic functions.
@@ -63,7 +62,8 @@ public final class GameLogic {
     private static final double SPAWN_SPEED_MODIFIER = 1.5;
     private static final int ENEMY_SPAWN_OFFSET_X = 128;
     private static final int ENEMY_SPAWN_OFFSET_Y = 224;
-    private static final String ERROR_POPUP_BG_PATH = "/images/gameButtons/errorPopupBg.png";
+    private static final String ERROR_POPUP_BG_PATH = "/images/gameScreen/errorPopupBg.png";
+    private static final String SAVED_POPUP_BG_PATH = "/images/gameScreen/savedPopupBg.png";
     private static final int LABEL_FONT_SIZE = 20;
     private static final int LABEL_LAYOUT_X = 480;
     private static final int LABEL_LAYOUT_Y = 730;
@@ -319,11 +319,17 @@ public final class GameLogic {
      * @return the error popup label
      */
     public static Label createErrorPopup(final String text) {
-        Image img = new Image(
-                Objects.requireNonNull(
-                        GameLogic.class.getResource(ERROR_POPUP_BG_PATH)
-                ).toExternalForm()
-        );
+        Image img;
+        if (text.equals("game saved")) {
+            img = new Image(Objects.requireNonNull(
+                    GameLogic.class.getResource(SAVED_POPUP_BG_PATH))
+                    .toExternalForm());
+        } else {
+            img = new Image(Objects.requireNonNull(
+                    GameLogic.class.getResource(ERROR_POPUP_BG_PATH)
+                    ).toExternalForm()
+            );
+        }
         BackgroundImage backgroundImage = new BackgroundImage(
                 img,
                 BackgroundRepeat.NO_REPEAT,
@@ -422,7 +428,7 @@ public final class GameLogic {
         });
 
         Image bgImg = new Image(Objects.requireNonNull(
-                GameLogic.class.getResourceAsStream("/images/gameButtons/gameOverPopupBg.png"))
+                GameLogic.class.getResourceAsStream("/images/gameScreen/gameOverPopupBg.png"))
         );
         BackgroundImage bg = new BackgroundImage(
                 bgImg, null, null, null, null);

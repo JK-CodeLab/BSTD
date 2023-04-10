@@ -195,16 +195,16 @@ public class GameView extends View {
     }
     private void determineMessage(final boolean tilesConnected, final boolean lastTileCorrect) {
         if (!player.getIsAlive()) {
-            Label message = GameLogic.createErrorPopup("You are dead");
+            Label message = GameLogic.createErrorPopup("you are dead");
             super.addToMainPane(message);
         } else if (!tilesConnected) {
-            Label message = GameLogic.createErrorPopup("Tiles are not connected");
+            Label message = GameLogic.createErrorPopup("tiles are not connected");
             super.addToMainPane(message);
         } else if (!lastTileCorrect) {
-            Label message = GameLogic.createErrorPopup("Last tile must reach the end");
+            Label message = GameLogic.createErrorPopup("last tile must reach the end");
             super.addToMainPane(message);
         } else if (player.isPlaying()) {
-            Label message = GameLogic.createErrorPopup("You are already playing");
+            Label message = GameLogic.createErrorPopup("you are already playing");
             super.addToMainPane(message);
         } else {
             player.setLevel(player.getLevel() + 1);
@@ -245,9 +245,9 @@ public class GameView extends View {
     private void gameSavedMessage(final Boolean saved) {
         Label message;
         if (saved) {
-            message = GameLogic.createErrorPopup("Game saved");
+            message = GameLogic.createErrorPopup("game saved");
         } else {
-            message = GameLogic.createErrorPopup("Error saving");
+            message = GameLogic.createErrorPopup("error saving");
         }
         super.addToMainPane(message);
 
@@ -283,7 +283,7 @@ public class GameView extends View {
         close.setOnAction(e -> popupWindow.close());
 
         Image bgImg = new Image(Objects.requireNonNull(
-                getClass().getResource("/images/gameButtons/menuPopupBg.png")).toExternalForm());
+                getClass().getResource("/images/gameScreen/menuPopupBg.png")).toExternalForm());
         BackgroundImage bg = new BackgroundImage(
                 bgImg, null, null, null, null);
         VBox layout = new VBox(LAYOUT_VBOX);
@@ -336,7 +336,7 @@ public class GameView extends View {
                             gameGrid.addEntity(placedEntity);
                             super.addToMainPane(entityImgView);
                         } else {
-                            Label message = GameLogic.createErrorPopup("Not enough money");
+                            Label message = GameLogic.createErrorPopup("not enough money");
                             super.addToMainPane(message);
                         }
 
